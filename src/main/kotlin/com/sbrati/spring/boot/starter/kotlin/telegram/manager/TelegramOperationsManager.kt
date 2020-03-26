@@ -34,11 +34,11 @@ class TelegramOperationsManager(private val contextRepository: TelegramCommandCo
     private val logger by LoggerDelegate()
 
     @Autowired(required = false)
-    var globalOperations: TelegramGlobalOperations? = null
+    private var globalOperations: TelegramGlobalOperations? = null
     @Autowired
-    var userService: UserService<*>? = null
+    private var userService: UserService<*>? = null
     @Autowired
-    var requestLimiter: RequestLimiter? = null
+    private var requestLimiter: RequestLimiter? = null
 
     fun onEvent(event: Event<*>): Any? {
         logger.debug("Received an event: {}", event)

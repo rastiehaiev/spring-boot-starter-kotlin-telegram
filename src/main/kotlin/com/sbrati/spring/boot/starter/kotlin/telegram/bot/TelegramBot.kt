@@ -9,12 +9,17 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.resolver.TelegramMessageRe
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.orElse
 import me.ivmg.telegram.Bot
 import me.ivmg.telegram.entities.*
+import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Component
 
 @Component
-class TelegramBot(private val bot: Bot,
+class TelegramBot(private val applicationContext: ApplicationContext,
                   private val telegramMessageResolver: TelegramMessageResolver,
                   private val contextRepository: TelegramCommandContextRepository) {
+
+    private val bot: Bot by lazy {
+        applicationContext.getBean(Bot::class.java)
+    }
 
     fun answerCallbackQuery(chatId: Long, answerCallbackQuery: AnswerCallbackQuery) {
         if (answerCallbackQuery.key.isNotBlank()) {
