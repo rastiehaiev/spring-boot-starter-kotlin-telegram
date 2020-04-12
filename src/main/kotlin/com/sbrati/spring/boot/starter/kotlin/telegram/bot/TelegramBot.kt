@@ -29,12 +29,13 @@ class TelegramBot(private val applicationContext: ApplicationContext,
     }
 
     fun sendMessage(chatId: Long, message: Message) {
-        if (message.key.isNotBlank()) {
+        if (message.plainText != null || message.key.isNotBlank()) {
             val replyMarkup: ReplyMarkup = keyboardMarkup(chatId, message.keyboard)
                     .orElse(inlineKeyboardMarkup(chatId, message.inlineKeyboard))
                     .orElse(ReplyKeyboardRemove(removeKeyboard = true))
 
-            val text = telegramMessageResolver.resolve(chatId = chatId, key = message.key, args = message.args)
+            val text = message.plainText
+                    .orElse(telegramMessageResolver.resolve(chatId = chatId, key = message.key, args = message.args))
             bot.sendMessage(replyMarkup = replyMarkup, chatId = chatId, text = text, parseMode = message.parseMode)
         }
     }

@@ -25,6 +25,10 @@ class TelegramCommandStage<T : TelegramCommandProgress>(val name: String) {
         handlers.add(UpdateWithTextHandler(handler))
     }
 
+    fun update(handler: (Update, T) -> Any) {
+        handlers.add(WholeUpdateHandler(handler))
+    }
+
     inline fun <reified C : CallbackDataObject> callback(callbackData: String, noinline handler: (Update, C, T) -> Any) {
         handlers.add(UpdateWithCallbackHandler(C::class, callbackData, handler))
     }

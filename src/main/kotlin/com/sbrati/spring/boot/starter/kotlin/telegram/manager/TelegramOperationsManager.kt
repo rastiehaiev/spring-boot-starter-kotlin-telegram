@@ -5,6 +5,7 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommand
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommandProgress
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommandRepository
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommandStage
+import com.sbrati.spring.boot.starter.kotlin.telegram.component.AdminChatIdsProvider
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.RequestLimiter
 import com.sbrati.spring.boot.starter.kotlin.telegram.context.CommandContext
 import com.sbrati.spring.boot.starter.kotlin.telegram.context.TelegramCommandContextRepository
@@ -39,6 +40,8 @@ class TelegramOperationsManager(private val contextRepository: TelegramCommandCo
     private var userService: UserService<*>? = null
     @Autowired
     private var requestLimiter: RequestLimiter? = null
+    @Autowired
+    private var adminChatIdsProvider: AdminChatIdsProvider? = null
 
     fun onEvent(event: Event<*>): Any? {
         logger.debug("Received an event: {}", event)
@@ -114,7 +117,6 @@ class TelegramOperationsManager(private val contextRepository: TelegramCommandCo
             var progress: TelegramCommandProgress? = null
             var command: TelegramCommand<out TelegramCommandProgress>? = null
 
-
             // override current command if new command received
             val text = update.message?.text
             if (text != null && text.startsWith("/")) {
@@ -135,6 +137,14 @@ class TelegramOperationsManager(private val contextRepository: TelegramCommandCo
 
             if (command == null || context == null || progress == null) {
                 return null
+            }
+
+            if (command.admin) {
+                val adminChatIds = adminChatIdsProvider?.adminChatIds()
+                if (adminChatIds == null || chatId !in adminChatIds) {
+                    logger.warn("Failed to execute admin command: ${update}.")
+                    return null
+                }
             }
 
             return when (val handleUpdate = handleUpdate(command, context, progress, update, command.getCurrentOrFirstStageName(context))) {

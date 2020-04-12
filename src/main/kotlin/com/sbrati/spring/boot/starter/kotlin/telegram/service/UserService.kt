@@ -9,4 +9,6 @@ interface UserService<U> {
     fun saveOrUpdate(user: U)
 
     fun apply(update: Update)
+
+    fun getAllChatIds(): List<Long>
 }

@@ -2,7 +2,7 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.command
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.context.CommandContext
 
-abstract class TelegramCommand<T : TelegramCommandProgress>(val name: String) {
+abstract class TelegramCommand<T : TelegramCommandProgress>(val name: String, val admin: Boolean = false) {
 
     private val stages: MutableList<TelegramCommandStage<T>> = ArrayList()
 
