@@ -5,19 +5,23 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.properties.TelegramBotConf
 import com.sbrati.spring.boot.starter.kotlin.telegram.properties.TelegramBotMode
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.DefaultLocaleService
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.LocaleService
+import com.sbrati.spring.boot.starter.kotlin.telegram.service.UserAwarenessService
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.LoggerDelegate
 import me.ivmg.telegram.Bot
 import me.ivmg.telegram.dispatch
 import me.ivmg.telegram.dispatcher.callbackQuery
 import me.ivmg.telegram.dispatcher.message
 import me.ivmg.telegram.extensions.filters.Filter
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.event.EventListener
 import org.springframework.context.support.ResourceBundleMessageSource
 
 @Configuration
@@ -26,6 +30,9 @@ import org.springframework.context.support.ResourceBundleMessageSource
 open class TelegramBotConfiguration(private val properties: TelegramBotConfigurationProperties) {
 
     private val logger by LoggerDelegate()
+
+    @Autowired
+    private var userAwarenessService: UserAwarenessService? = null
 
     @Bean
     open fun internalBot(manager: TelegramManager): Bot {
@@ -69,5 +76,14 @@ open class TelegramBotConfiguration(private val properties: TelegramBotConfigura
     open fun defaultLocaleService(): LocaleService {
         logger.warn("Default locale service has been created. This means user preferred locales will be stored in memory.")
         return DefaultLocaleService()
+    }
+
+    @EventListener(ApplicationReadyEvent::class)
+    open fun userAware() {
+        userAwarenessService?.let {
+            logger.info("Users aware processing has been started.")
+            it.aware()
+            logger.info("Users aware processing has been finished.")
+        }
     }
 }
