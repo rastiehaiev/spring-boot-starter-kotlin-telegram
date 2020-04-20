@@ -1,5 +1,5 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.command.impl
 
-import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommandProgress
+import com.sbrati.spring.boot.starter.kotlin.telegram.command.Context
 
-class NoOpCommand : TelegramCommandProgress()
+class NoOpCommand : Context()

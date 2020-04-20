@@ -4,11 +4,11 @@ import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
 @Component
-class TelegramCommandRepository(private val commands: List<TelegramCommand<out TelegramCommandProgress>>?) {
+class TelegramCommandRepository(private val commands: List<TelegramCommand<out Context>>?) {
 
-    private var commandMap: Map<String, TelegramCommand<out TelegramCommandProgress>> = HashMap()
+    private var commandMap: Map<String, TelegramCommand<out Context>> = HashMap()
 
-    fun findByName(name: String): TelegramCommand<out TelegramCommandProgress>? {
+    fun findByName(name: String): TelegramCommand<out Context>? {
         return commandMap[name]
     }
 

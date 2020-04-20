@@ -1,20 +1,19 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.command
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.handler.*
-import com.sbrati.spring.boot.starter.kotlin.telegram.model.Message
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.callback.CallbackDataObject
 import com.sbrati.telegram.domain.Event
 import me.ivmg.telegram.entities.Contact
 import me.ivmg.telegram.entities.Update
 
-class TelegramCommandStage<T : TelegramCommandProgress>(val name: String) {
+class TelegramCommandStage<T : Context>(val name: String) {
 
-    var startMessage: ((T) -> Message)? = null
+    var start: ((Update?, T) -> Any)? = null
     val handlers: MutableList<UpdateHandler<T>> = ArrayList()
     val eventHandlers: MutableList<EventHandler<*, T>> = ArrayList()
 
-    fun start(startMessage: (T) -> Message) {
-        this.startMessage = startMessage
+    fun start(start: (Update?, T) -> Any) {
+        this.start = start
     }
 
     fun contact(handler: (Update, Contact, T) -> Any) {

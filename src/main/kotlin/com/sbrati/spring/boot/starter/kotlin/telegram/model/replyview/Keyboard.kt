@@ -1,6 +1,6 @@
-package com.sbrati.spring.boot.starter.kotlin.telegram.model
+package com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview
 
-class Keyboard(val buttons: List<List<KeyboardButton>>, val resize: Boolean = true) {
+class Keyboard(val buttons: List<List<KeyboardButton>>, val resize: Boolean = true) : ReplyView {
 
     constructor(builder: Builder) : this(builder.buttons, builder.resize)
 

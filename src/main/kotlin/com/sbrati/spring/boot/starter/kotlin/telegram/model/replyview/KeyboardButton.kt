@@ -1,4 +1,4 @@
-package com.sbrati.spring.boot.starter.kotlin.telegram.model
+package com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview
 
 class KeyboardButton(var plainText: String? = null,
                      var key: String = "",

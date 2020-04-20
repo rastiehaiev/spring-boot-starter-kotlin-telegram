@@ -1,19 +1,15 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.manager
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommand
-import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommandProgress
-import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommandRepository
+import com.sbrati.spring.boot.starter.kotlin.telegram.command.Context
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommandStage
-import com.sbrati.spring.boot.starter.kotlin.telegram.component.AdminChatIdsProvider
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.RequestLimiter
-import com.sbrati.spring.boot.starter.kotlin.telegram.context.CommandContext
-import com.sbrati.spring.boot.starter.kotlin.telegram.context.TelegramCommandContextRepository
+import com.sbrati.spring.boot.starter.kotlin.telegram.context.CommandExecutionContext
+import com.sbrati.spring.boot.starter.kotlin.telegram.context.TelegramCommandExecutionContextProvider
 import com.sbrati.spring.boot.starter.kotlin.telegram.handler.EventHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.handler.UpdateHandler
-import com.sbrati.spring.boot.starter.kotlin.telegram.model.FinishWithMessage
-import com.sbrati.spring.boot.starter.kotlin.telegram.model.Message
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.NoHandlerFound
+import com.sbrati.spring.boot.starter.kotlin.telegram.model.StartNewCommand
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.stages.JumpToStage
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.stages.NextStage
 import com.sbrati.spring.boot.starter.kotlin.telegram.operations.GlobalEventHandler
@@ -25,23 +21,21 @@ import com.sbrati.telegram.domain.Event
 import me.ivmg.telegram.entities.Update
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
-class TelegramOperationsManager(private val contextRepository: TelegramCommandContextRepository,
-                                private val commandRepository: TelegramCommandRepository,
+class TelegramOperationsManager(private val executionContextProvider: TelegramCommandExecutionContextProvider,
                                 private val objectMapper: ObjectMapper) {
 
     private val logger by LoggerDelegate()
 
-    @Autowired(required = false)
-    private var globalOperations: TelegramGlobalOperations? = null
     @Autowired
     private var userService: UserService<*>? = null
+
     @Autowired
     private var requestLimiter: RequestLimiter? = null
-    @Autowired
-    private var adminChatIdsProvider: AdminChatIdsProvider? = null
+
+    @Autowired(required = false)
+    private var globalOperations: TelegramGlobalOperations? = null
 
     fun onEvent(event: Event<*>): Any? {
         logger.debug("Received an event: {}", event)
@@ -50,22 +44,10 @@ class TelegramOperationsManager(private val contextRepository: TelegramCommandCo
         }
 
         synchronized(event.chatId) {
-            var context: CommandContext? = null
-            var progress: TelegramCommandProgress? = null
-            var command: TelegramCommand<out TelegramCommandProgress>? = null
-            if (progress == null) {
-                context = contextRepository.findByChatId(event.chatId)
-                progress = context?.progress
-                command = context?.run { commandRepository.findByName(this.commandName) }
-            }
-
-            if (command == null || context == null || progress == null) {
-                return null
-            }
-
-            return when (val handleEvent = handleEventPayload(command, context, progress, event, command.getCurrentOrFirstStageName(context))) {
-                is NextStage -> handleEventPayload(command, context, progress, event, command.getNextStageName(context))
-                is JumpToStage -> handleEventPayload(command, context, progress, event, command.getExistingStageName(handleEvent.stage))
+            val executionContext = executionContextProvider.findByChatId(event.chatId) ?: return null
+            return when (val handleEvent = handleEventPayload(executionContext, event, executionContext.command.getCurrentOrFirstStageName(executionContext))) {
+                is NextStage -> handleEventPayload(executionContext, event, executionContext.command.getNextStageName(executionContext))
+                is JumpToStage -> handleEventPayload(executionContext, event, executionContext.command.getExistingStageName(handleEvent.stage))
                 else -> handleEvent
             }
         }
@@ -78,17 +60,17 @@ class TelegramOperationsManager(private val contextRepository: TelegramCommandCo
         }
     }
 
-    private fun handleEventPayload(command: TelegramCommand<out TelegramCommandProgress>, context: CommandContext, progress: TelegramCommandProgress, event: Event<*>, stage: String?): Any? {
+    private fun handleEventPayload(executionContext: CommandExecutionContext, event: Event<*>, stage: String?): Any? {
         stage ?: return null
-        logger.debug("Processing event. Command: {}, stage: {}.", command.name, stage)
-        val startStageResult = tryToStartStage(context, command, progress, stage)
+        logger.debug("Processing event. Command: {}, stage: {}.", executionContext.command.name, stage)
+        val startStageResult = tryToStartStage(executionContext, stage)
         if (startStageResult != null) {
             return startStageResult
         }
 
-        val currentStage = command.findStageByName(stage)
-        val eventHandler: (EventHandler<Any, TelegramCommandProgress>)? = currentStage.eventHandlers.firstOrNull { it.isApplicable(event.payload) } as (EventHandler<Any, TelegramCommandProgress>)?
-        return eventHandler?.handle(event as Event<Any>, progress) ?: NoHandlerFound.INSTANCE
+        val currentStage = executionContext.command.findStageByName(stage)
+        val eventHandler: (EventHandler<Any, Context>)? = currentStage.eventHandlers.firstOrNull { it.isApplicable(event.payload) } as (EventHandler<Any, Context>)?
+        return eventHandler?.handle(event as Event<Any>, executionContext.context) ?: NoHandlerFound
     }
 
     fun onUpdate(update: Update): Any? {
@@ -110,107 +92,72 @@ class TelegramOperationsManager(private val contextRepository: TelegramCommandCo
 
             val globalCallbackHandler = globalOperations?.let { it.handlers.firstOrNull { handler -> handler.isApplicable(update) } }
             if (globalCallbackHandler != null) {
-                return globalCallbackHandler.handle(update)
-            }
-
-            var context: CommandContext? = null
-            var progress: TelegramCommandProgress? = null
-            var command: TelegramCommand<out TelegramCommandProgress>? = null
-
-            // override current command if new command received
-            val text = update.message?.text
-            if (text != null && text.startsWith("/")) {
-                val commandName = text.substring(1)
-                command = commandRepository.findByName(commandName) ?: return null
-                progress = createCommandProgress(command, update, chatId)
-
-                context = contextRepository.create(chatId, command)
-                context.progress = progress
-            }
-
-            // trying to find existing command by chat ID
-            if (progress == null) {
-                context = contextRepository.findByChatId(chatId)
-                progress = context?.progress
-                command = context?.run { commandRepository.findByName(this.commandName) }
-            }
-
-            if (command == null || context == null || progress == null) {
-                return null
-            }
-
-            if (command.admin) {
-                val adminChatIds = adminChatIdsProvider?.adminChatIds()
-                if (adminChatIds == null || chatId !in adminChatIds) {
-                    logger.warn("Failed to execute admin command: ${update}.")
-                    return null
+                val result = globalCallbackHandler.handle(update)
+                if (result is StartNewCommand) {
+                    executionContextProvider.create(chatId, update, result.commandName, synthetic = true)
+                } else {
+                    return result
                 }
             }
 
-            return when (val handleUpdate = handleUpdate(command, context, progress, update, command.getCurrentOrFirstStageName(context))) {
-                is NextStage -> handleUpdate(command, context, progress, update, command.getNextStageName(context))
-                is JumpToStage -> handleUpdate(command, context, progress, update, command.getExistingStageName(handleUpdate.stage))
+            val text = update.message?.text
+            val executionContext = (if (text != null && text.startsWith("/")) {
+                val commandName = text.substring(1)
+                executionContextProvider.create(chatId, update, commandName)
+            } else {
+                executionContextProvider.findByChatId(chatId)
+            }) ?: return null
+
+            return when (val handleUpdate = handleUpdate(executionContext, update, executionContext.command.getCurrentOrFirstStageName(executionContext))) {
+                is NextStage -> handleUpdate(executionContext, update, executionContext.command.getNextStageName(executionContext))
+                is JumpToStage -> handleUpdate(executionContext, update, executionContext.command.getExistingStageName(handleUpdate.stage))
                 else -> handleUpdate
             }
         }
     }
 
-    private fun handleUpdate(command: TelegramCommand<out TelegramCommandProgress>,
-                             context: CommandContext,
-                             progress: TelegramCommandProgress,
-                             update: Update,
-                             stage: String?): Any? {
-
+    private fun handleUpdate(executionContext: CommandExecutionContext, update: Update, stage: String?): Any? {
+        val command = executionContext.command
         stage ?: return null
-        logger.debug("Processing update. Command: {}, stage: {}.", command.name, stage)
-        val startStageResult = tryToStartStage(context, command, progress, stage)
+        logger.debug("Processing update. Command: {}, stage: {}.", executionContext.command.name, stage)
+        val startStageResult = tryToStartStage(executionContext, stage, update)
         if (startStageResult != null) {
             return startStageResult
         }
 
         // trying to process update
         val currentStage = command.findStageByName(stage)
-        return processUpdate(currentStage, update, progress)
+        return processUpdate(currentStage, update, executionContext.context)
     }
 
-    private fun tryToStartStage(context: CommandContext, command: TelegramCommand<out TelegramCommandProgress>, progress: TelegramCommandProgress, stage: String): Any? {
-        context.currentStageStarted = context.currentStage == stage
-        context.currentStage = stage
-        if (!context.currentStageStarted) {
+    private fun tryToStartStage(executionContext: CommandExecutionContext, stage: String, update: Update? = null): Any? {
+        val command = executionContext.command
+        val context = executionContext.context
+        executionContext.currentStageStarted = executionContext.currentStage == stage
+        executionContext.currentStage = stage
+        if (!executionContext.currentStageStarted) {
             val currentStage = command.findStageByName(stage)
-            val startMessage = startMessage(currentStage, progress)
-            context.currentStageStarted = true
-            if (startMessage != null) {
-                if (command.hasNoHandlers()) {
-                    return FinishWithMessage(startMessage)
-                }
-                return startMessage
+            val startPayload = start(currentStage, context, update)
+            executionContext.currentStageStarted = true
+            if (startPayload != null) {
+                return startPayload
             }
         }
         return null
     }
 
-    private fun createCommandProgress(command: TelegramCommand<out TelegramCommandProgress>, update: Update, chatId: Long): TelegramCommandProgress? {
-        val progress = command.createProgressEntity()
-        progress.firstName = update.message!!.from!!.firstName
-        progress.lastName = update.message!!.from!!.lastName
-        progress.chatId = chatId
-        progress.locale = update.message?.from?.languageCode?.run { Locale(this) }
-        return progress
-    }
-
-    private fun processUpdate(currentStage: TelegramCommandStage<out TelegramCommandProgress>, update: Update, progress: TelegramCommandProgress): Any? {
-        val handler: UpdateHandler<TelegramCommandProgress>? = currentStage.handlers.firstOrNull {
-            val updateHandler: UpdateHandler<TelegramCommandProgress> = it as (UpdateHandler<TelegramCommandProgress>)
+    private fun processUpdate(currentStage: TelegramCommandStage<out Context>, update: Update, progress: Context): Any? {
+        val handler: UpdateHandler<Context>? = currentStage.handlers.firstOrNull {
+            val updateHandler: UpdateHandler<Context> = it as (UpdateHandler<Context>)
             updateHandler.isApplicable(update, progress)
-        } as (UpdateHandler<TelegramCommandProgress>?)
-        return handler?.handle(update, progress) ?: NoHandlerFound.INSTANCE
+        } as (UpdateHandler<Context>?)
+        return handler?.handle(update, progress) ?: NoHandlerFound
     }
 
-    private fun startMessage(currentStage: TelegramCommandStage<out TelegramCommandProgress>, progress: TelegramCommandProgress): Message? {
-        val startMessage: ((TelegramCommandProgress) -> Message)? = currentStage.startMessage as ((TelegramCommandProgress) -> Message)?
-        if (startMessage != null) {
-            return startMessage.invoke(progress)
+    private fun start(currentStage: TelegramCommandStage<out Context>, progress: Context, update: Update? = null): Any? {
+        val start: ((Update?, Context) -> Any)? = currentStage.start as ((Update?, Context) -> Any)?
+        if (start != null) {
+            return start.invoke(update, progress)
         }
         return null
     }

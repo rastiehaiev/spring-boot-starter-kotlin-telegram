@@ -20,6 +20,11 @@ fun <T> T?.orElse(t: T): T {
     return this ?: t
 }
 
+fun Update.fullName(): String {
+    val from = this.message?.from ?: return "<unknown>"
+    return from.firstName + (from.lastName?.prependIndent(" ") ?: "")
+}
+
 fun Update.chatId(): Long? {
     return this.message?.chat?.id ?: this.callbackQuery?.message?.chat?.id
 }

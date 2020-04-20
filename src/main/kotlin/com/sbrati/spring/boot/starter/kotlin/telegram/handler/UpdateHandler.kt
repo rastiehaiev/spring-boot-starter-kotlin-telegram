@@ -1,9 +1,9 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.handler
 
-import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommandProgress
+import com.sbrati.spring.boot.starter.kotlin.telegram.command.Context
 import me.ivmg.telegram.entities.Update
 
-abstract class UpdateHandler<T : TelegramCommandProgress> {
+abstract class UpdateHandler<T : Context> {
 
     abstract fun isApplicable(update: Update, progress: T): Boolean
 

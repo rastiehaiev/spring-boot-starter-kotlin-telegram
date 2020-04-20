@@ -1,8 +1,8 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.command
 
-import com.sbrati.spring.boot.starter.kotlin.telegram.context.CommandContext
+import com.sbrati.spring.boot.starter.kotlin.telegram.context.CommandExecutionContext
 
-abstract class TelegramCommand<T : TelegramCommandProgress>(val name: String, val admin: Boolean = false) {
+abstract class TelegramCommand<T : Context>(val name: String, val admin: Boolean = false, val synthetic: Boolean = false) {
 
     private val stages: MutableList<TelegramCommandStage<T>> = ArrayList()
 
@@ -10,30 +10,26 @@ abstract class TelegramCommand<T : TelegramCommandProgress>(val name: String, va
         stages.add(TelegramCommandStage<T>(name).apply(stageOperations))
     }
 
-    fun getCurrentOrFirstStageName(context: CommandContext): String {
-        if (context.currentStage == null) {
+    fun getCurrentOrFirstStageName(executionContext: CommandExecutionContext): String {
+        if (executionContext.currentStage == null) {
             return stages[0].name
         }
-        return context.currentStage!!
+        return executionContext.currentStage!!
     }
 
     fun getExistingStageName(stageName: String?): String? {
         return stageName?.run { findStageByNameNullable(this)?.name }
     }
 
-    fun getNextStageName(context: CommandContext): String? {
-        return findNextStageByName(context.currentStage!!)?.run { this.name }
+    fun getNextStageName(executionContext: CommandExecutionContext): String? {
+        return findNextStageByName(executionContext.currentStage!!)?.run { this.name }
     }
 
     fun findStageByName(name: String): TelegramCommandStage<T> {
         return findStageByNameNullable(name)!!
     }
 
-    fun hasNoHandlers(): Boolean {
-        return stages.flatMap { it.handlers }.count() + stages.flatMap { it.eventHandlers }.count() == 0
-    }
-
-    abstract fun createProgressEntity(): T
+    abstract fun createContext(): T
 
     private fun findStageByNameNullable(name: String): TelegramCommandStage<T>? {
         return stages.find { it.name == name }

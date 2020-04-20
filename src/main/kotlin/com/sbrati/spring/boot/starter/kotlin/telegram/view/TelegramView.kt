@@ -1,7 +1,7 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.view
 
-import com.sbrati.spring.boot.starter.kotlin.telegram.model.KeyboardButton
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.TelegramSupportedLanguages
+import com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview.KeyboardButton
 import org.springframework.stereotype.Component
 
 @Component

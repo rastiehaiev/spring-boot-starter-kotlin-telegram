@@ -1,4 +1,4 @@
-package com.sbrati.spring.boot.starter.kotlin.telegram.model
+package com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.callback.CallbackDataObject
 
