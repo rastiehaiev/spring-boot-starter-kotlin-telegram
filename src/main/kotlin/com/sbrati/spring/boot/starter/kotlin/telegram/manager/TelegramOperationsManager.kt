@@ -146,12 +146,13 @@ class TelegramOperationsManager(private val executionContextProvider: TelegramCo
         return null
     }
 
-    private fun processUpdate(currentStage: TelegramCommandStage<out Context>, update: Update, progress: Context): Any? {
+    private fun processUpdate(currentStage: TelegramCommandStage<out Context>, update: Update, context: Context): Any? {
         val handler: UpdateHandler<Context>? = currentStage.handlers.firstOrNull {
             val updateHandler: UpdateHandler<Context> = it as (UpdateHandler<Context>)
-            updateHandler.isApplicable(update, progress)
+            updateHandler.isApplicable(update, context)
         } as (UpdateHandler<Context>?)
-        return handler?.handle(update, progress) ?: NoHandlerFound
+        logger.debug("Current stage: {}. Handler: {}.", currentStage.name, handler)
+        return handler?.handle(update, context) ?: NoHandlerFound
     }
 
     private fun start(currentStage: TelegramCommandStage<out Context>, progress: Context, update: Update? = null): Any? {

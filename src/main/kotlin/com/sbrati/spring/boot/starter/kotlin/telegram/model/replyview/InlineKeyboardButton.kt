@@ -4,5 +4,6 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.model.callback.CallbackDat
 
 class InlineKeyboardButton(var key: String = "",
                            var args: List<String> = emptyList(),
-                           var callbackData: CallbackDataObject,
+                           var callbackData: CallbackDataObject? = null,
+                           var url: String? = null,
                            var global: Boolean = false)

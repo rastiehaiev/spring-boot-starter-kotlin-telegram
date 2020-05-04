@@ -30,5 +30,5 @@ class UpdateWithCallbackHandler<C : CallbackDataObject, T : Context>(private val
         return callbackData
     }
 
-    private fun progressUuidPrefix(progress: T) = "${progress.uuid}^"
+    private fun progressUuidPrefix(progress: T) = "${progress.id}^"
 }

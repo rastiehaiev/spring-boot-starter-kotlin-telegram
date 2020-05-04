@@ -7,3 +7,6 @@ class KeyboardButton(var plainText: String? = null,
 fun button(key: String): KeyboardButton {
     return KeyboardButton(key = key)
 }
+fun plainTextButton(plainText: String): KeyboardButton {
+    return KeyboardButton(plainText = plainText)
+}

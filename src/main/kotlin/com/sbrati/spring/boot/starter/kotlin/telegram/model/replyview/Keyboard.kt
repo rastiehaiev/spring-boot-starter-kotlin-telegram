@@ -29,3 +29,49 @@ fun months(): Keyboard = keyboard {
     row(button("month.july"), button("month.august"), button("month.september"))
     row(button("month.october"), button("month.november"), button("month.december"))
 }
+
+fun days(): Keyboard = keyboard {
+    row(
+            plainTextButton("1"),
+            plainTextButton("2"),
+            plainTextButton("3"),
+            plainTextButton("4"),
+            plainTextButton("5")
+    )
+    row(
+            plainTextButton("6"),
+            plainTextButton("7"),
+            plainTextButton("8"),
+            plainTextButton("9"),
+            plainTextButton("10")
+    )
+    row(
+            plainTextButton("11"),
+            plainTextButton("12"),
+            plainTextButton("13"),
+            plainTextButton("14"),
+            plainTextButton("15")
+    )
+    row(
+            plainTextButton("16"),
+            plainTextButton("17"),
+            plainTextButton("18"),
+            plainTextButton("19"),
+            plainTextButton("20")
+    )
+    row(
+            plainTextButton("21"),
+            plainTextButton("22"),
+            plainTextButton("23"),
+            plainTextButton("24"),
+            plainTextButton("25")
+    )
+    row(
+            plainTextButton("26"),
+            plainTextButton("27"),
+            plainTextButton("28"),
+            plainTextButton("29"),
+            plainTextButton("30")
+    )
+    row(plainTextButton("31"))
+}

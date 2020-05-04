@@ -26,10 +26,13 @@ class InlineKeyboardResolver(private val telegramMessageResolver: TelegramMessag
             innerButtons.map {
                 var prefix = "GLOBAL"
                 if (!it.global) {
-                    prefix = "${context.context.uuid}"
+                    prefix = context.context.id
                 }
                 val text = telegramMessageResolver.resolve(chatId = chatId, key = it.key, args = it.args)
-                InlineKeyboardButton(text = text, callbackData = "${prefix}^${it.callbackData.asString()}")
+                val callbackData = it.callbackData?.let { data ->
+                    "${prefix}^${data.asString()}"
+                }
+                InlineKeyboardButton(text = text, url = it.url, callbackData = callbackData)
             }
         }
     }
