@@ -19,5 +19,7 @@ fun TelegramSupportedLanguages.contains(language: String): Boolean {
 
 fun TelegramSupportedLanguages.localeByName(name: String): Locale? {
     return defaultLanguage.takeIf { it.first == name }?.second
-            .orElse(otherLanguages.firstOrNull { it.first == name }?.second)
+            .orElse {
+                otherLanguages.firstOrNull { it.first == name }?.second
+            }
 }

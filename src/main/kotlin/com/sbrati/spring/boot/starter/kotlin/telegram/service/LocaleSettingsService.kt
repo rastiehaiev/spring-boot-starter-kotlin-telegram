@@ -14,6 +14,6 @@ class LocaleSettingsService(private val localeService: LocaleService, private va
 
     fun updateUserLanguagePreferences(chatId: Long, language: String) {
         val locale = supportedLanguages.localeByName(language)!!
-        localeService.save(chatId, locale)
+        localeService.saveLocale(chatId, locale)
     }
 }

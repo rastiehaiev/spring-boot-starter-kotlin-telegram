@@ -1,7 +1,7 @@
-package com.sbrati.spring.boot.starter.kotlin.telegram.manager.resulthandler
+package com.sbrati.spring.boot.starter.kotlin.telegram.handler.result
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.AdminChatIdsProvider
-import com.sbrati.spring.boot.starter.kotlin.telegram.handler.message.MessageHandlers
+import com.sbrati.spring.boot.starter.kotlin.telegram.handler.MessageHandlers
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.RouteMessage
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.UserService
 import org.springframework.stereotype.Component

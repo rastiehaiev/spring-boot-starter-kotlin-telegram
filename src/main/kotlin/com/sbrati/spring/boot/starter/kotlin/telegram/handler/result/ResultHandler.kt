@@ -1,4 +1,4 @@
-package com.sbrati.spring.boot.starter.kotlin.telegram.manager.resulthandler
+package com.sbrati.spring.boot.starter.kotlin.telegram.handler.result
 
 abstract class ResultHandler<R>(private val kClass: Class<R>) {
 

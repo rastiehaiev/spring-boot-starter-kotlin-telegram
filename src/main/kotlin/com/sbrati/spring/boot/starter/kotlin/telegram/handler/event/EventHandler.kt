@@ -1,4 +1,4 @@
-package com.sbrati.spring.boot.starter.kotlin.telegram.handler
+package com.sbrati.spring.boot.starter.kotlin.telegram.handler.event
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.Context
 import com.sbrati.telegram.domain.Event

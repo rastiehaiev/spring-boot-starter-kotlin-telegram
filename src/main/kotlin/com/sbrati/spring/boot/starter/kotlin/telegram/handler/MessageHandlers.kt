@@ -1,5 +1,6 @@
-package com.sbrati.spring.boot.starter.kotlin.telegram.handler.message
+package com.sbrati.spring.boot.starter.kotlin.telegram.handler
 
+import com.sbrati.spring.boot.starter.kotlin.telegram.handler.result.AbstractMessageHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.message.MessageSpec
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.LoggerDelegate
 import org.springframework.stereotype.Component

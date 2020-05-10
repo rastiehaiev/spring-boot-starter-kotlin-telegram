@@ -1,5 +1,6 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.configuration
 
+import com.sbrati.spring.boot.starter.kotlin.telegram.component.BlockedChatHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.manager.TelegramManager
 import com.sbrati.spring.boot.starter.kotlin.telegram.properties.TelegramBotConfigurationProperties
 import com.sbrati.spring.boot.starter.kotlin.telegram.properties.TelegramBotMode
@@ -76,6 +77,16 @@ open class TelegramBotConfiguration(private val properties: TelegramBotConfigura
     open fun defaultLocaleService(): LocaleService {
         logger.warn("Default locale service has been created. This means user preferred locales will be stored in memory.")
         return DefaultLocaleService()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(BlockedChatHandler::class)
+    open fun blockedChatHandler(): BlockedChatHandler {
+        return object : BlockedChatHandler {
+            override fun onChatIdBlocked(chatId: Long) {
+                logger.warn("Chat with ID=$chatId has been blocked.")
+            }
+        }
     }
 
     @EventListener(ApplicationReadyEvent::class)

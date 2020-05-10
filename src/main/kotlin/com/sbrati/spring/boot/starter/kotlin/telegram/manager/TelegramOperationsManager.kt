@@ -6,8 +6,8 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommandSta
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.RequestLimiter
 import com.sbrati.spring.boot.starter.kotlin.telegram.context.CommandExecutionContext
 import com.sbrati.spring.boot.starter.kotlin.telegram.context.TelegramCommandExecutionContextProvider
-import com.sbrati.spring.boot.starter.kotlin.telegram.handler.EventHandler
-import com.sbrati.spring.boot.starter.kotlin.telegram.handler.UpdateHandler
+import com.sbrati.spring.boot.starter.kotlin.telegram.handler.event.EventHandler
+import com.sbrati.spring.boot.starter.kotlin.telegram.handler.update.UpdateHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.NoHandlerFound
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.StartNewCommand
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.stages.JumpToStage

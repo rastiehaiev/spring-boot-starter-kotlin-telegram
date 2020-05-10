@@ -1,10 +1,12 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.command
 
-import com.sbrati.spring.boot.starter.kotlin.telegram.handler.*
+import com.sbrati.spring.boot.starter.kotlin.telegram.handler.event.EventHandler
+import com.sbrati.spring.boot.starter.kotlin.telegram.handler.update.*
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.callback.CallbackDataObject
 import com.sbrati.telegram.domain.Event
 import me.ivmg.telegram.entities.Contact
 import me.ivmg.telegram.entities.Update
+import me.ivmg.telegram.entities.User
 
 class TelegramCommandStage<T : Context>(val name: String) {
 
@@ -18,6 +20,10 @@ class TelegramCommandStage<T : Context>(val name: String) {
 
     fun contact(handler: (Update, Contact, T) -> Any) {
         handlers.add(UpdateWithContactHandler(handler))
+    }
+
+    fun forwardedUser(handler: (Update, User, T) -> Any) {
+        handlers.add(UpdateWithForwardedUserHandler(handler))
     }
 
     fun text(handler: (Update, String, T) -> Any) {

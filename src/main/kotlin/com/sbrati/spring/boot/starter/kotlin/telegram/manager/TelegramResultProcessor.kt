@@ -1,7 +1,7 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.manager
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.context.TelegramCommandExecutionContextProvider
-import com.sbrati.spring.boot.starter.kotlin.telegram.manager.resulthandler.ResultHandler
+import com.sbrati.spring.boot.starter.kotlin.telegram.handler.result.ResultHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.FinishWith
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.MultipleResults
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.NoHandlerFound

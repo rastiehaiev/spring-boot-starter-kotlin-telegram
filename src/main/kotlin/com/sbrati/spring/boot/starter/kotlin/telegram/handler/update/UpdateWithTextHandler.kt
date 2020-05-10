@@ -1,4 +1,4 @@
-package com.sbrati.spring.boot.starter.kotlin.telegram.handler
+package com.sbrati.spring.boot.starter.kotlin.telegram.handler.update
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.Context
 import me.ivmg.telegram.entities.Update

@@ -25,9 +25,9 @@ class DefaultTelegramLocaleResolver(private val localeService: LocaleService?,
     }
 
     override fun resolve(chatId: Long): Locale {
-        return localeService?.find(chatId)
-                .orElse(executionContextProvider.findByChatId(chatId)?.context?.locale)
-                .orElse(supportedLanguages.defaultLanguage.second)
+        return localeService?.findLocaleByChatId(chatId)
+                .orElse { executionContextProvider.findByChatId(chatId)?.context?.locale }
+                .orElse { supportedLanguages.defaultLanguage.second }
                 .orElse(Locale.ENGLISH)
     }
 

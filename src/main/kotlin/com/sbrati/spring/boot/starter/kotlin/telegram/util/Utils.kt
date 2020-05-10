@@ -20,6 +20,10 @@ fun <T> T?.orElse(t: T): T {
     return this ?: t
 }
 
+fun <T> T?.orElse(t: () -> T): T {
+    return this ?: t()
+}
+
 fun Update.fullName(): String {
     val from = this.message?.from ?: return "<unknown>"
     return from.firstName + (from.lastName?.prependIndent(" ") ?: "")

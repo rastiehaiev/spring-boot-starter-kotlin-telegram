@@ -23,7 +23,7 @@ class MonthResolver(private val localeResolver: TelegramLocaleResolver) {
             return cache[lowerCaseMonth]!!
         }
         val month = findByDisplayName(locale, TextStyle.FULL_STANDALONE, lowerCaseMonth)
-                .orElse(findByDisplayName(locale, TextStyle.FULL, lowerCaseMonth))
+                .orElse { findByDisplayName(locale, TextStyle.FULL, lowerCaseMonth) }
         if (month != null) {
             cache[lowerCaseMonth] = month
             logger.debug("Added pair ({} -> {}) to cache.", lowerCaseMonth, month)

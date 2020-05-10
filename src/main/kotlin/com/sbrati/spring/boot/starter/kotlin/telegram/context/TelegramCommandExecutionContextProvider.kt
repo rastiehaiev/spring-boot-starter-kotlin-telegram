@@ -48,9 +48,9 @@ class TelegramCommandExecutionContextProvider(private val commandRepository: Tel
     private fun createCommandContext(chatId: Long, update: Update, command: TelegramCommand<out Context>): Context {
         val context = command.createContext()
         context.firstName = update.message?.from?.firstName
-                .orElse(update.callbackQuery?.from?.firstName)!!
+                .orElse { update.callbackQuery?.from?.firstName!! }
         context.lastName = update.message?.from?.lastName
-                .orElse(update.callbackQuery?.from?.lastName)
+                .orElse { update.callbackQuery?.from?.lastName }
         context.chatId = chatId
         context.locale = update.message?.from?.languageCode?.run { Locale(this) }
         return context

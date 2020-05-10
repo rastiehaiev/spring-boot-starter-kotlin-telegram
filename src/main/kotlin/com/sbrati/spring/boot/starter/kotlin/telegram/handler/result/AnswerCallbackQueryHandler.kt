@@ -1,4 +1,4 @@
-package com.sbrati.spring.boot.starter.kotlin.telegram.handler.message
+package com.sbrati.spring.boot.starter.kotlin.telegram.handler.result
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.message.AnswerCallbackQuery
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.message.bot.BotAnswerCallbackQuery

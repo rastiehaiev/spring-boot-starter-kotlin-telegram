@@ -1,4 +1,4 @@
-package com.sbrati.spring.boot.starter.kotlin.telegram.manager.resulthandler
+package com.sbrati.spring.boot.starter.kotlin.telegram.handler.result
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.RemoveMessage
 import me.ivmg.telegram.Bot

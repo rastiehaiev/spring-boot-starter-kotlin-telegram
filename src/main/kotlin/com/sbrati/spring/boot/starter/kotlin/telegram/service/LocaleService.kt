@@ -4,7 +4,7 @@ import java.util.*
 
 interface LocaleService {
 
-    fun find(chatId: Long): Locale?
+    fun findLocaleByChatId(chatId: Long): Locale?
 
-    fun save(chatId: Long, locale: Locale)
+    fun saveLocale(chatId: Long, locale: Locale)
 }
