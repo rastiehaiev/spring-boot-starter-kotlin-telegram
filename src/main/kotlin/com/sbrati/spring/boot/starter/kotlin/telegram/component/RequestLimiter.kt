@@ -13,8 +13,9 @@ class RequestLimiter {
     private val banDurationMillis: Long
     private val banOptions: BanOptions
     private val userPermits: MutableMap<Long, UserPermit>
+    private val onBanAction: ((Long) -> Unit)?
 
-    constructor(allowedRequestsPerMinute: Int, banDurationSeconds: Long) {
+    constructor(allowedRequestsPerMinute: Int, banDurationSeconds: Long, onBanAction: ((Long) -> Unit)? = null) {
         this.banOptions = BanOptions(allowedRequestsPerMinute, banDurationSeconds)
         if (allowedRequestsPerMinute <= 0 || banDurationSeconds <= 0) {
             throw IllegalStateException("Incorrect options specified for RequestLimiter: $banOptions.")
@@ -22,6 +23,7 @@ class RequestLimiter {
         this.allowedRequestsPerMinute = allowedRequestsPerMinute
         this.banDurationMillis = TimeUnit.SECONDS.toMillis(banDurationSeconds)
         this.userPermits = ConcurrentHashMap()
+        this.onBanAction = onBanAction
     }
 
     fun tryAcquire(chatId: Long): Boolean {
@@ -42,6 +44,7 @@ class RequestLimiter {
                     userPermit.banned = true
                     userPermit.justBanned.set(true)
                     userPermit.creationTimestamp = System.currentTimeMillis()
+                    onBanAction?.invoke(chatId)
                     false
                 }
             }

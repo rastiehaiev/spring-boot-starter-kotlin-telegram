@@ -8,11 +8,13 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.context.CommandExecutionCo
 import com.sbrati.spring.boot.starter.kotlin.telegram.context.TelegramCommandExecutionContextProvider
 import com.sbrati.spring.boot.starter.kotlin.telegram.handler.event.EventHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.handler.update.UpdateHandler
+import com.sbrati.spring.boot.starter.kotlin.telegram.model.EmptyResult
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.NoHandlerFound
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.StartNewCommand
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.stages.JumpToStage
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.stages.NextStage
 import com.sbrati.spring.boot.starter.kotlin.telegram.operations.GlobalEventHandler
+import com.sbrati.spring.boot.starter.kotlin.telegram.operations.GlobalUpdateHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.operations.TelegramGlobalOperations
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.UserService
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.LoggerDelegate
@@ -36,6 +38,9 @@ class TelegramOperationsManager(private val executionContextProvider: TelegramCo
 
     @Autowired(required = false)
     private var globalOperations: TelegramGlobalOperations? = null
+
+    @Autowired(required = false)
+    private var globalUpdateHandler: GlobalUpdateHandler? = null
 
     fun onEvent(event: Event<*>): Any? {
         logger.debug("Received an event: {}", event)
@@ -85,6 +90,12 @@ class TelegramOperationsManager(private val executionContextProvider: TelegramCo
                 }
                 return null
             }
+        }
+
+        val globalUpdateHandler = this.globalUpdateHandler
+        if (globalUpdateHandler != null) {
+            globalUpdateHandler.onUpdate(update)
+            return EmptyResult
         }
 
         synchronized(chatId) {

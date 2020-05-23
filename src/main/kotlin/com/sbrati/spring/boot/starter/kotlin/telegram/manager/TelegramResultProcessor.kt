@@ -2,6 +2,7 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.manager
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.context.TelegramCommandExecutionContextProvider
 import com.sbrati.spring.boot.starter.kotlin.telegram.handler.result.ResultHandler
+import com.sbrati.spring.boot.starter.kotlin.telegram.model.EmptyResult
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.FinishWith
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.MultipleResults
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.NoHandlerFound
@@ -22,6 +23,7 @@ class TelegramResultProcessor(private val executionContextProvider: TelegramComm
             when (result) {
                 is NoHandlerFound -> logger.debug("No handler found.")
                 is Unit -> logger.debug("Nothing to process.")
+                is EmptyResult -> logger.trace("Received an empty result.")
                 is MultipleResults -> {
                     result.list.forEach { result ->
                         processResult(chatId, result)
