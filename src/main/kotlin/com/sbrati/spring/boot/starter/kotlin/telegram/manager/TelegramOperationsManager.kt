@@ -43,6 +43,11 @@ class TelegramOperationsManager(private val executionContextProvider: TelegramCo
     private var globalUpdateHandler: GlobalUpdateHandler? = null
 
     fun onEvent(event: Event<*>): Any? {
+        val payload = event.payload
+        if (payload is Update) {
+            return onUpdate(payload)
+        }
+
         logger.debug("Received an event: {}", event)
         if (event.isGlobal) {
             return processGlobalEvent(event)

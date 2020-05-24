@@ -17,7 +17,11 @@ class KeyboardViewResolver(private val telegramMessageResolver: TelegramMessageR
     }
 
     private fun convertToApiButtons(chatId: Long, buttons: List<com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview.KeyboardButton>): List<KeyboardButton> {
-        return buttons.map { KeyboardButton(text = getTextFromKeyboardButton(chatId, it.key, it.args, it.plainText)) }
+        return buttons.map {
+            KeyboardButton(text = getTextFromKeyboardButton(chatId, it.key, it.args, it.plainText),
+                    requestContact = it.requestContact,
+                    requestLocation = it.requestLocation)
+        }
     }
 
     private fun getTextFromKeyboardButton(chatId: Long, key: String, args: List<String>, plainText: String?): String {
