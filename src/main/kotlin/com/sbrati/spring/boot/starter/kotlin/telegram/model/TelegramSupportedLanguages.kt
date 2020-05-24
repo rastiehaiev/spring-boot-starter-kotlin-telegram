@@ -17,6 +17,11 @@ fun TelegramSupportedLanguages.contains(language: String): Boolean {
     return localeByName(language) != null
 }
 
+fun TelegramSupportedLanguages.contains(locale: Locale): Boolean {
+    return defaultLanguage.second.language == locale.language
+            || otherLanguages.map { it.second }.firstOrNull { it.language == locale.language } != null
+}
+
 fun TelegramSupportedLanguages.localeByName(name: String): Locale? {
     return defaultLanguage.takeIf { it.first == name }?.second
             .orElse {

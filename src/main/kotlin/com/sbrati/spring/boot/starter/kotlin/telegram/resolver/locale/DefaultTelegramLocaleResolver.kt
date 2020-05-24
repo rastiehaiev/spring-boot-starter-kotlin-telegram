@@ -2,6 +2,7 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.resolver.locale
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.context.TelegramCommandExecutionContextProvider
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.TelegramSupportedLanguages
+import com.sbrati.spring.boot.starter.kotlin.telegram.model.contains
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.LocaleService
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.LoggerDelegate
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.orElse
@@ -26,7 +27,7 @@ class DefaultTelegramLocaleResolver(private val localeService: LocaleService?,
 
     override fun resolve(chatId: Long): Locale {
         return localeService?.findLocaleByChatId(chatId)
-                .orElse { executionContextProvider.findByChatId(chatId)?.context?.locale }
+                .orElse { executionContextProvider.findByChatId(chatId)?.context?.locale?.takeIf { supportedLanguages.contains(it) } }
                 .orElse { supportedLanguages.defaultLanguage.second }
                 .orElse(Locale.ENGLISH)
     }
