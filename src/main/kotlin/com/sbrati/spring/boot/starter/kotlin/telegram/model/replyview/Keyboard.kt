@@ -1,13 +1,14 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview
 
-class Keyboard(val buttons: List<List<KeyboardButton>>, val resize: Boolean = true) : ReplyView {
+class Keyboard(val buttons: List<List<KeyboardButton>>, val resize: Boolean = true, val oneTime: Boolean = false) : ReplyView {
 
-    constructor(builder: Builder) : this(builder.buttons, builder.resize)
+    constructor(builder: Builder) : this(builder.buttons, builder.resize, builder.oneTime)
 
     class Builder {
 
         val buttons: MutableList<List<KeyboardButton>> = ArrayList()
         var resize: Boolean = true
+        var oneTime: Boolean = false
 
         fun row(buttons: List<KeyboardButton>) {
             this.buttons.add(buttons)

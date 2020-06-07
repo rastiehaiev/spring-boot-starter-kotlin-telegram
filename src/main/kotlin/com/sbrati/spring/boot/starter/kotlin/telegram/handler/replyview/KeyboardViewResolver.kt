@@ -13,7 +13,7 @@ class KeyboardViewResolver(private val telegramMessageResolver: TelegramMessageR
 
     override fun handle(chatId: Long, resultPayload: Keyboard): ReplyMarkup? {
         val apiButtons = resultPayload.buttons.map { convertToApiButtons(chatId, it) }
-        return KeyboardReplyMarkup(keyboard = apiButtons, resizeKeyboard = resultPayload.resize)
+        return KeyboardReplyMarkup(keyboard = apiButtons, resizeKeyboard = resultPayload.resize, oneTimeKeyboard = resultPayload.oneTime)
     }
 
     private fun convertToApiButtons(chatId: Long, buttons: List<com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview.KeyboardButton>): List<KeyboardButton> {
