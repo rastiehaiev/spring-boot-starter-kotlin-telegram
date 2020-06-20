@@ -30,7 +30,7 @@ class TelegramResultProcessor(private val executionContextProvider: TelegramComm
                     }
                 }
                 is FinishWith -> {
-                    handle(chatId, result.result)
+                    processResult(chatId, result.result)
                     logger.debug("Removing context for user with chatID={}.", chatId)
                     executionContextProvider.removeByChatId(chatId)
                 }

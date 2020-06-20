@@ -20,13 +20,13 @@ class InlineKeyboardResolver(private val telegramMessageResolver: TelegramMessag
 
     private fun inlineKeyboardButtons(chatId: Long, inlineKeyboard: InlineKeyboard): List<List<InlineKeyboardButton>> {
         val context by lazy {
-            executionContextProvider.findByChatId(chatId)!!
+            executionContextProvider.findByChatId(chatId)
         }
         return inlineKeyboard.buttons.map { innerButtons ->
             innerButtons.map {
                 var prefix = "GLOBAL"
                 if (!it.global) {
-                    prefix = context.context.id
+                    prefix = context?.context?.id ?: ""
                 }
                 val text = telegramMessageResolver.resolve(chatId = chatId, key = it.key, args = it.args)
                 val callbackData = it.callbackData?.let { data ->
