@@ -2,7 +2,7 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.command
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.context.CommandExecutionContext
 
-abstract class TelegramCommand<T : Context>(val name: String, val admin: Boolean = false, val synthetic: Boolean = false) {
+abstract class TelegramCommand<T : Context>(val name: String, private val contextType: Class<T>, val admin: Boolean = false, val synthetic: Boolean = false) {
 
     private val stages: MutableList<TelegramCommandStage<T>> = ArrayList()
 
@@ -29,7 +29,7 @@ abstract class TelegramCommand<T : Context>(val name: String, val admin: Boolean
         return findStageByNameNullable(name)!!
     }
 
-    abstract fun createContext(): T
+    fun createContext(): T = contextType.newInstance()
 
     private fun findStageByNameNullable(name: String): TelegramCommandStage<T>? {
         return stages.find { it.name == name }

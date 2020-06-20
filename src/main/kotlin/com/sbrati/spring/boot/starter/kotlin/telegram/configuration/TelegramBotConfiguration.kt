@@ -1,9 +1,13 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.configuration
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.BlockedChatHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.manager.TelegramManager
 import com.sbrati.spring.boot.starter.kotlin.telegram.properties.TelegramBotConfigurationProperties
 import com.sbrati.spring.boot.starter.kotlin.telegram.properties.TelegramBotMode
+import com.sbrati.spring.boot.starter.kotlin.telegram.repository.InMemoryTelegramCommandExecutionContextRepository
+import com.sbrati.spring.boot.starter.kotlin.telegram.repository.TelegramCommandExecutionContextRepository
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.DefaultLocaleService
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.LocaleService
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.UserAwarenessService
@@ -55,8 +59,9 @@ open class TelegramBotConfiguration(private val properties: TelegramBotConfigura
     }
 
     @Bean
-    open fun pollTelegramUpdates(internalBot: Bot): CommandLineRunner {
+    open fun commandLineRunner(internalBot: Bot, objectMapper: ObjectMapper): CommandLineRunner {
         return CommandLineRunner {
+            objectMapper.registerModule(KotlinModule())
             if (properties.mode == TelegramBotMode.POLLING) {
                 logger.info("Starting polling updates.")
                 internalBot.startPolling()
@@ -77,6 +82,13 @@ open class TelegramBotConfiguration(private val properties: TelegramBotConfigura
     open fun defaultLocaleService(): LocaleService {
         logger.warn("Default locale service has been created. This means user preferred locales will be stored in memory.")
         return DefaultLocaleService()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(TelegramCommandExecutionContextRepository::class)
+    open fun commandExecutionContextRepository(): TelegramCommandExecutionContextRepository {
+        logger.warn("Default TelegramCommandExecutionContextRepository has been created. This means command context will be stored in memory.")
+        return InMemoryTelegramCommandExecutionContextRepository()
     }
 
     @Bean

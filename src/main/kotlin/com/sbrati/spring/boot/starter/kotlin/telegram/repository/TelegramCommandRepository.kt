@@ -1,5 +1,7 @@
-package com.sbrati.spring.boot.starter.kotlin.telegram.command
+package com.sbrati.spring.boot.starter.kotlin.telegram.repository
 
+import com.sbrati.spring.boot.starter.kotlin.telegram.command.Context
+import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommand
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 

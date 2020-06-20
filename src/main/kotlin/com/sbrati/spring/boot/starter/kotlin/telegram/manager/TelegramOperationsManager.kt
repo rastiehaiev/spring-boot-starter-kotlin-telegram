@@ -16,6 +16,7 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.model.stages.NextStage
 import com.sbrati.spring.boot.starter.kotlin.telegram.operations.GlobalEventHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.operations.GlobalUpdateHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.operations.TelegramGlobalOperations
+import com.sbrati.spring.boot.starter.kotlin.telegram.repository.TelegramCommandRepository
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.UserService
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.LoggerDelegate
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.chatId
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class TelegramOperationsManager(private val executionContextProvider: TelegramCommandExecutionContextProvider,
+                                private val commandRepository: TelegramCommandRepository,
                                 private val objectMapper: ObjectMapper) {
 
     private val logger by LoggerDelegate()
@@ -55,11 +57,13 @@ class TelegramOperationsManager(private val executionContextProvider: TelegramCo
 
         synchronized(event.chatId) {
             val executionContext = executionContextProvider.findByChatId(event.chatId) ?: return null
-            return when (val handleEvent = handleEventPayload(executionContext, event, executionContext.command.getCurrentOrFirstStageName(executionContext))) {
-                is NextStage -> handleEventPayload(executionContext, event, executionContext.command.getNextStageName(executionContext))
-                is JumpToStage -> handleEventPayload(executionContext, event, executionContext.command.getExistingStageName(handleEvent.stage))
+            val command = commandRepository.findByName(executionContext.commandName)!!
+            val result = when (val handleEvent = handleEventPayload(executionContext, event, command.getCurrentOrFirstStageName(executionContext))) {
+                is NextStage -> handleEventPayload(executionContext, event, command.getNextStageName(executionContext))
+                is JumpToStage -> handleEventPayload(executionContext, event, command.getExistingStageName(handleEvent.stage))
                 else -> handleEvent
             }
+            return result.also { executionContextProvider.store(executionContext) }
         }
     }
 
@@ -72,13 +76,14 @@ class TelegramOperationsManager(private val executionContextProvider: TelegramCo
 
     private fun handleEventPayload(executionContext: CommandExecutionContext, event: Event<*>, stage: String?): Any? {
         stage ?: return null
-        logger.debug("Processing event. Command: {}, stage: {}.", executionContext.command.name, stage)
+        val command = commandRepository.findByName(executionContext.commandName)!!
+        logger.debug("Processing event. Command: {}, stage: {}.", command.name, stage)
         val startStageResult = tryToStartStage(executionContext, stage)
         if (startStageResult != null) {
             return startStageResult
         }
 
-        val currentStage = executionContext.command.findStageByName(stage)
+        val currentStage = command.findStageByName(stage)
         val eventHandler: (EventHandler<Any, Context>)? = currentStage.eventHandlers.firstOrNull { it.isApplicable(event.payload) } as (EventHandler<Any, Context>)?
         return eventHandler?.handle(event as Event<Any>, executionContext.context) ?: NoHandlerFound
     }
@@ -110,7 +115,7 @@ class TelegramOperationsManager(private val executionContextProvider: TelegramCo
             if (globalCallbackHandler != null) {
                 val result = globalCallbackHandler.handle(update)
                 if (result is StartNewCommand) {
-                    executionContextProvider.create(chatId, update, result.commandName, synthetic = true)
+                    executionContextProvider.create(chatId, update, result.commandName, context = result.context, synthetic = true)
                 } else {
                     return result
                 }
@@ -124,18 +129,20 @@ class TelegramOperationsManager(private val executionContextProvider: TelegramCo
                 executionContextProvider.findByChatId(chatId)
             }) ?: return null
 
-            return when (val handleUpdate = handleUpdate(executionContext, update, executionContext.command.getCurrentOrFirstStageName(executionContext))) {
-                is NextStage -> handleUpdate(executionContext, update, executionContext.command.getNextStageName(executionContext))
-                is JumpToStage -> handleUpdate(executionContext, update, executionContext.command.getExistingStageName(handleUpdate.stage))
+            val command = commandRepository.findByName(executionContext.commandName)!!
+            val result = when (val handleUpdate = handleUpdate(executionContext, update, command.getCurrentOrFirstStageName(executionContext))) {
+                is NextStage -> handleUpdate(executionContext, update, command.getNextStageName(executionContext))
+                is JumpToStage -> handleUpdate(executionContext, update, command.getExistingStageName(handleUpdate.stage))
                 else -> handleUpdate
             }
+            return result.also { executionContextProvider.store(executionContext) }
         }
     }
 
     private fun handleUpdate(executionContext: CommandExecutionContext, update: Update, stage: String?): Any? {
-        val command = executionContext.command
+        val command = commandRepository.findByName(executionContext.commandName)!!
         stage ?: return null
-        logger.debug("Processing update. Command: {}, stage: {}.", executionContext.command.name, stage)
+        logger.debug("Processing update. Command: {}, stage: {}.", command.name, stage)
         val startStageResult = tryToStartStage(executionContext, stage, update)
         if (startStageResult != null) {
             return startStageResult
@@ -147,7 +154,7 @@ class TelegramOperationsManager(private val executionContextProvider: TelegramCo
     }
 
     private fun tryToStartStage(executionContext: CommandExecutionContext, stage: String, update: Update? = null): Any? {
-        val command = executionContext.command
+        val command = commandRepository.findByName(executionContext.commandName)!!
         val context = executionContext.context
         executionContext.currentStageStarted = executionContext.currentStage == stage
         executionContext.currentStage = stage
