@@ -3,10 +3,13 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.configuration
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.BlockedChatHandler
+import com.sbrati.spring.boot.starter.kotlin.telegram.component.GenericRequestLimiter
 import com.sbrati.spring.boot.starter.kotlin.telegram.manager.TelegramManager
+import com.sbrati.spring.boot.starter.kotlin.telegram.model.BanOptions
 import com.sbrati.spring.boot.starter.kotlin.telegram.properties.TelegramBotConfigurationProperties
 import com.sbrati.spring.boot.starter.kotlin.telegram.properties.TelegramBotMode
 import com.sbrati.spring.boot.starter.kotlin.telegram.repository.InMemoryTelegramCommandExecutionContextRepository
+import com.sbrati.spring.boot.starter.kotlin.telegram.repository.RequestStatisticsRepository
 import com.sbrati.spring.boot.starter.kotlin.telegram.repository.TelegramCommandExecutionContextRepository
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.DefaultLocaleService
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.LocaleService
@@ -19,6 +22,7 @@ import me.ivmg.telegram.dispatcher.message
 import me.ivmg.telegram.extensions.filters.Filter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -99,6 +103,12 @@ open class TelegramBotConfiguration(private val properties: TelegramBotConfigura
                 logger.warn("Chat with ID=$chatId has been blocked.")
             }
         }
+    }
+
+    @Bean
+    @ConditionalOnBean(RequestStatisticsRepository::class)
+    open fun genericRequestLimiter(repository: RequestStatisticsRepository, banOptions: BanOptions): GenericRequestLimiter {
+        return GenericRequestLimiter(banOptions, repository)
     }
 
     @EventListener(ApplicationReadyEvent::class)
