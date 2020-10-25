@@ -3,6 +3,7 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.manager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.Context
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommandStage
+import com.sbrati.spring.boot.starter.kotlin.telegram.component.DailyRequestLimiter
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.GenericRequestLimiter
 import com.sbrati.spring.boot.starter.kotlin.telegram.context.CommandExecutionContext
 import com.sbrati.spring.boot.starter.kotlin.telegram.context.TelegramCommandExecutionContextProvider
@@ -39,6 +40,9 @@ class TelegramOperationsManager(
 
     @Autowired(required = false)
     private var requestLimiter: GenericRequestLimiter? = null
+
+    @Autowired(required = false)
+    private var dailyRequestLimiter: DailyRequestLimiter? = null
 
     @Autowired(required = false)
     private var globalOperations: TelegramGlobalOperations? = null
@@ -100,6 +104,14 @@ class TelegramOperationsManager(
     fun onUpdate(update: Update): Any? {
         logger.debug("Received an update: {}", objectMapper.writeValueAsString(update))
         val chatId = update.chatId()?.takeIf { it > 0 } ?: return null
+
+        val localDailyRequestLimiter = dailyRequestLimiter
+        if (localDailyRequestLimiter != null) {
+            val errorResponse = localDailyRequestLimiter.checkLimit(chatId)
+            if (errorResponse != null) {
+                return errorResponse
+            }
+        }
 
         val localRequestLimiter = requestLimiter
         if (localRequestLimiter != null) {
