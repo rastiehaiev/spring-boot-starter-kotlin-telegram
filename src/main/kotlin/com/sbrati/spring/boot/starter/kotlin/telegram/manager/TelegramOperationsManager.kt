@@ -99,7 +99,7 @@ class TelegramOperationsManager(
 
     fun onUpdate(update: Update): Any? {
         logger.debug("Received an update: {}", objectMapper.writeValueAsString(update))
-        val chatId = update.chatId() ?: return null
+        val chatId = update.chatId()?.takeIf { it > 0 } ?: return null
 
         val localRequestLimiter = requestLimiter
         if (localRequestLimiter != null) {
