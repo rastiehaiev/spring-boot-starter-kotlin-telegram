@@ -1,7 +1,7 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.model.message
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview.ReplyView
-import me.ivmg.telegram.entities.ParseMode
+import com.github.kotlintelegrambot.entities.ParseMode
 
 class PlainMessage(var text: String? = null,
                    var parseMode: ParseMode? = null,

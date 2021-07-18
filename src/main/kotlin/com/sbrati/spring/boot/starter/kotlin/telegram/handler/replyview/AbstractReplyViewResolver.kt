@@ -1,6 +1,6 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.handler.replyview
 
-import me.ivmg.telegram.entities.ReplyMarkup
+import com.github.kotlintelegrambot.entities.ReplyMarkup
 
 abstract class AbstractReplyViewResolver<R>(private val kClass: Class<R>) {
 

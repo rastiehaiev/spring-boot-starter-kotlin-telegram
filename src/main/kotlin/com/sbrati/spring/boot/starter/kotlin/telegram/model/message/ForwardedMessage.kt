@@ -1,8 +1,8 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.model.message
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview.ReplyView
-import me.ivmg.telegram.entities.ParseMode
-import me.ivmg.telegram.entities.Update
+import com.github.kotlintelegrambot.entities.ParseMode
+import com.github.kotlintelegrambot.entities.Update
 
 class ForwardedMessage(var original: Update? = null,
                        var textWrapperKey: String? = null,

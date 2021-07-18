@@ -1,7 +1,8 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.handler.result
 
+import com.github.kotlintelegrambot.Bot
+import com.github.kotlintelegrambot.entities.ChatId
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.ChatActionResponse
-import me.ivmg.telegram.Bot
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Component
@@ -17,6 +18,6 @@ class ChatActionResponseHandler : ResultHandler<ChatActionResponse>(ChatActionRe
     }
 
     override fun handle(chatId: Long, resultPayload: ChatActionResponse) {
-        bot.sendChatAction(chatId = chatId, action = resultPayload.chatAction)
+        bot.sendChatAction(chatId = ChatId.fromId(chatId), action = resultPayload.chatAction)
     }
 }

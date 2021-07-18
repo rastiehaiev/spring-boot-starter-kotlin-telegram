@@ -2,7 +2,7 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.controller
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.manager.TelegramManager
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.LoggerDelegate
-import me.ivmg.telegram.entities.Update
+import com.github.kotlintelegrambot.entities.Update
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

@@ -1,5 +1,6 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.handler.result.message
 
+import com.github.kotlintelegrambot.entities.ChatId
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.BotResult
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.BotResultStatus
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.getBotResultStatus
@@ -13,7 +14,7 @@ class BotVideoNoteHandler : BotHandler<BotVideoNote>(BotVideoNote::class.java) {
     override fun handle(botMessage: BotVideoNote): BotResult {
         val chatId = botMessage.chatId
         val result = bot.sendVideoNote(
-                chatId = chatId,
+                chatId = ChatId.fromId(chatId),
                 videoNoteId = botMessage.videoNoteId,
                 replyMarkup = botMessage.replyMarkup)
 

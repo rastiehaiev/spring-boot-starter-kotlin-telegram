@@ -1,6 +1,6 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.service
 
-import me.ivmg.telegram.entities.Update
+import com.github.kotlintelegrambot.entities.Update
 
 interface UserService<U> {
 

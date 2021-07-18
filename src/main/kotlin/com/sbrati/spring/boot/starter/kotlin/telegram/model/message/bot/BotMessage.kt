@@ -1,7 +1,7 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.model.message.bot
 
-import me.ivmg.telegram.entities.ParseMode
-import me.ivmg.telegram.entities.ReplyMarkup
+import com.github.kotlintelegrambot.entities.ParseMode
+import com.github.kotlintelegrambot.entities.ReplyMarkup
 
 class BotMessage(var chatId: Long,
                  var text: String,

@@ -2,6 +2,12 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.configuration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.github.kotlintelegrambot.Bot
+import com.github.kotlintelegrambot.dispatch
+import com.github.kotlintelegrambot.dispatcher.callbackQuery
+import com.github.kotlintelegrambot.dispatcher.message
+import com.github.kotlintelegrambot.extensions.filters.Filter
+import com.github.kotlintelegrambot.logging.LogLevel
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.BlockedChatHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.GenericRequestLimiter
 import com.sbrati.spring.boot.starter.kotlin.telegram.manager.TelegramManager
@@ -15,11 +21,6 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.service.DefaultLocaleServi
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.LocaleService
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.UserAwarenessService
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.LoggerDelegate
-import me.ivmg.telegram.Bot
-import me.ivmg.telegram.dispatch
-import me.ivmg.telegram.dispatcher.callbackQuery
-import me.ivmg.telegram.dispatcher.message
-import me.ivmg.telegram.extensions.filters.Filter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
@@ -45,18 +46,24 @@ open class TelegramBotConfiguration(private val properties: TelegramBotConfigura
 
     @Bean
     open fun internalBot(manager: TelegramManager): Bot {
-        val bot = me.ivmg.telegram.bot {
+        val botLogLevel = when (properties.logLevel?.toUpperCase()) {
+            "BASIC" -> LogLevel.Network.Basic
+            "BODY" -> LogLevel.Network.Body
+            else -> LogLevel.Network.None
+        }
+
+        val bot = com.github.kotlintelegrambot.bot {
             token = properties.token
             timeout = properties.timeoutSeconds
-            logLevel = properties.logLevel
-            dispatch {
-                message(Filter.All) { _, update ->
-                    manager.onUpdate(update)
+            logLevel = botLogLevel
+                dispatch {
+                    message(Filter.All) {
+                        manager.onUpdate(update)
+                    }
+                    callbackQuery {
+                        manager.onUpdate(update)
+                    }
                 }
-                callbackQuery { _, update ->
-                    manager.onUpdate(update)
-                }
-            }
         }
         logger.info("Created Telegram Bot. Mode: ${properties.mode}.")
         return bot
@@ -107,7 +114,10 @@ open class TelegramBotConfiguration(private val properties: TelegramBotConfigura
 
     @Bean
     @ConditionalOnBean(RequestStatisticsRepository::class)
-    open fun genericRequestLimiter(repository: RequestStatisticsRepository, banOptions: BanOptions): GenericRequestLimiter {
+    open fun genericRequestLimiter(
+        repository: RequestStatisticsRepository,
+        banOptions: BanOptions
+    ): GenericRequestLimiter {
         return GenericRequestLimiter(banOptions, repository)
     }
 

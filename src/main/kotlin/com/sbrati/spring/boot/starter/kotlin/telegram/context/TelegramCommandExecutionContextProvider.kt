@@ -1,12 +1,12 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.context
 
+import com.github.kotlintelegrambot.entities.Update
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.Context
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.AdminChatIdsProvider
 import com.sbrati.spring.boot.starter.kotlin.telegram.repository.TelegramCommandExecutionContextRepository
 import com.sbrati.spring.boot.starter.kotlin.telegram.repository.TelegramCommandRepository
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.LoggerDelegate
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.orElse
-import me.ivmg.telegram.entities.Update
 import org.springframework.stereotype.Component
 import java.util.*
 

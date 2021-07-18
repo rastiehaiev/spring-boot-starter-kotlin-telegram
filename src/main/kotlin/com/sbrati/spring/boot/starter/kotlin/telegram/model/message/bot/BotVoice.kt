@@ -1,6 +1,6 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.model.message.bot
 
-import me.ivmg.telegram.entities.ReplyMarkup
+import com.github.kotlintelegrambot.entities.ReplyMarkup
 
 class BotVoice(var chatId: Long,
                var audioId: String,

@@ -1,6 +1,6 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.operations
 
-import me.ivmg.telegram.entities.Update
+import com.github.kotlintelegrambot.entities.Update
 
 open abstract class GlobalUpdateHandler {
 

@@ -6,7 +6,7 @@
 
     <groupId>com.sbrati</groupId>
     <artifactId>spring-boot-starter-kotlin-telegram</artifactId>
-    <version>3.0.18</version>
+    <version>4.0.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -35,9 +35,9 @@
             <version>1.0.1</version>
         </dependency>
         <dependency>
-            <groupId>io.github.seik.kotlin-telegram-bot</groupId>
+            <groupId>io.github.kotlin-telegram-bot.kotlin-telegram-bot</groupId>
             <artifactId>telegram</artifactId>
-            <version>4.6.0</version>
+            <version>6.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

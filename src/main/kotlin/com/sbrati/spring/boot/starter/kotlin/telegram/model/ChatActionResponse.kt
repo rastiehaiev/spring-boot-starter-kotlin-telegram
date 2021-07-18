@@ -1,6 +1,6 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.model
 
-import me.ivmg.telegram.entities.ChatAction
+import com.github.kotlintelegrambot.entities.ChatAction
 
 class ChatActionResponse(val chatAction: ChatAction)
 

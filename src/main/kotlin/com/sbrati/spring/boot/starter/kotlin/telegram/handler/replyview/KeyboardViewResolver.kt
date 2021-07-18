@@ -1,10 +1,10 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.handler.replyview
 
+import com.github.kotlintelegrambot.entities.KeyboardReplyMarkup
+import com.github.kotlintelegrambot.entities.ReplyMarkup
+import com.github.kotlintelegrambot.entities.keyboard.KeyboardButton
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview.Keyboard
 import com.sbrati.spring.boot.starter.kotlin.telegram.resolver.TelegramMessageResolver
-import me.ivmg.telegram.entities.KeyboardButton
-import me.ivmg.telegram.entities.KeyboardReplyMarkup
-import me.ivmg.telegram.entities.ReplyMarkup
 import org.springframework.stereotype.Component
 
 @Component

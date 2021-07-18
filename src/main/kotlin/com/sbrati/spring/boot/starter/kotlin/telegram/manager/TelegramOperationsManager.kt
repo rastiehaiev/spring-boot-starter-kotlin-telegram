@@ -22,7 +22,7 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.service.UserService
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.LoggerDelegate
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.chatId
 import com.sbrati.telegram.domain.Event
-import me.ivmg.telegram.entities.Update
+import com.github.kotlintelegrambot.entities.Update
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

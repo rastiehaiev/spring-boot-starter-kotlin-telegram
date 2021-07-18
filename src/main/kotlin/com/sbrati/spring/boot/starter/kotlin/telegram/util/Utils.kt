@@ -1,6 +1,6 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.util
 
-import me.ivmg.telegram.entities.Update
+import com.github.kotlintelegrambot.entities.Update
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.properties.ReadOnlyProperty

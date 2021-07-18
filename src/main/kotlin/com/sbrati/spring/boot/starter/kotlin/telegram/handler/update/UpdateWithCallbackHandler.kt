@@ -2,7 +2,7 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.handler.update
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.Context
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.callback.CallbackDataObject
-import me.ivmg.telegram.entities.Update
+import com.github.kotlintelegrambot.entities.Update
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 

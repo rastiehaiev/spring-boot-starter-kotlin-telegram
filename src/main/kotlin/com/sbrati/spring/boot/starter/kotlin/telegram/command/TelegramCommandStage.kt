@@ -1,12 +1,12 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.command
 
+import com.github.kotlintelegrambot.entities.Contact
+import com.github.kotlintelegrambot.entities.Update
+import com.github.kotlintelegrambot.entities.User
 import com.sbrati.spring.boot.starter.kotlin.telegram.handler.event.EventHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.handler.update.*
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.callback.CallbackDataObject
 import com.sbrati.telegram.domain.Event
-import me.ivmg.telegram.entities.Contact
-import me.ivmg.telegram.entities.Update
-import me.ivmg.telegram.entities.User
 
 class TelegramCommandStage<T : Context>(val name: String) {
 

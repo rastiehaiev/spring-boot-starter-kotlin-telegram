@@ -1,7 +1,7 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.model.message
 
+import com.github.kotlintelegrambot.entities.ParseMode
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview.ReplyView
-import me.ivmg.telegram.entities.ParseMode
 
 
 class EditMessageText(

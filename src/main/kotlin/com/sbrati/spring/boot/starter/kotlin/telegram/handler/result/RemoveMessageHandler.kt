@@ -1,7 +1,8 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.handler.result
 
+import com.github.kotlintelegrambot.Bot
+import com.github.kotlintelegrambot.entities.ChatId
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.RemoveMessage
-import me.ivmg.telegram.Bot
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Component
@@ -17,6 +18,6 @@ class RemoveMessageHandler : ResultHandler<RemoveMessage>(RemoveMessage::class.j
     }
 
     override fun handle(chatId: Long, resultPayload: RemoveMessage) {
-        bot.deleteMessage(chatId, resultPayload.messageId)
+        bot.deleteMessage(ChatId.fromId(chatId), resultPayload.messageId)
     }
 }

@@ -1,7 +1,7 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.operations
 
+import com.github.kotlintelegrambot.entities.Update
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.BanOptions
-import me.ivmg.telegram.entities.Update
 
 class BanHandler(private val handler: (Update, BanOptions) -> Any) {
 

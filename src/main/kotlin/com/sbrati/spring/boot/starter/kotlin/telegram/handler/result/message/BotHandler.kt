@@ -1,9 +1,9 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.handler.result.message
 
+import com.github.kotlintelegrambot.Bot
+import com.github.kotlintelegrambot.entities.Message
+import com.github.kotlintelegrambot.network.Response
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.BotResult
-import me.ivmg.telegram.Bot
-import me.ivmg.telegram.entities.Message
-import me.ivmg.telegram.network.Response
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 

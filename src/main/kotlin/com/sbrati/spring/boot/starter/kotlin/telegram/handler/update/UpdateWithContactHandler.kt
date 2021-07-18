@@ -1,8 +1,8 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.handler.update
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.Context
-import me.ivmg.telegram.entities.Contact
-import me.ivmg.telegram.entities.Update
+import com.github.kotlintelegrambot.entities.Contact
+import com.github.kotlintelegrambot.entities.Update
 
 class UpdateWithContactHandler<T : Context>(private val handler: (Update, Contact, T) -> Any) : UpdateHandler<T>() {
 

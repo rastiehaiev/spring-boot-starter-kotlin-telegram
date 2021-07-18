@@ -1,13 +1,14 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.handler.result
 
+import com.github.kotlintelegrambot.Bot
+import com.github.kotlintelegrambot.entities.ChatId
+import com.github.kotlintelegrambot.entities.ReplyKeyboardRemove
+import com.github.kotlintelegrambot.entities.ReplyMarkup
 import com.sbrati.spring.boot.starter.kotlin.telegram.handler.replyview.AbstractReplyViewResolver
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.EditReplyMarkup
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview.NoReplyView
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.replyview.ReplyView
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.orElse
-import me.ivmg.telegram.Bot
-import me.ivmg.telegram.entities.ReplyKeyboardRemove
-import me.ivmg.telegram.entities.ReplyMarkup
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Component
@@ -17,6 +18,7 @@ class EditReplyMarkupHandler : ResultHandler<EditReplyMarkup>(EditReplyMarkup::c
 
     @Autowired
     private lateinit var applicationContext: ApplicationContext
+
     @Autowired
     private var replyViewResolvers: List<AbstractReplyViewResolver<*>> = emptyList()
 
@@ -25,7 +27,9 @@ class EditReplyMarkupHandler : ResultHandler<EditReplyMarkup>(EditReplyMarkup::c
     }
 
     override fun handle(chatId: Long, resultPayload: EditReplyMarkup) {
-        bot.editMessageReplyMarkup(chatId = chatId, messageId = resultPayload.messageId, replyMarkup = replyMarkup(chatId, resultPayload.replyView))
+        bot.editMessageReplyMarkup(chatId = ChatId.fromId(chatId),
+            messageId = resultPayload.messageId,
+            replyMarkup = replyMarkup(chatId, resultPayload.replyView))
     }
 
     private fun replyMarkup(chatId: Long, replyView: ReplyView?): ReplyMarkup? {
@@ -33,7 +37,8 @@ class EditReplyMarkupHandler : ResultHandler<EditReplyMarkup>(EditReplyMarkup::c
             return null
         }
         return replyView?.let {
-            val resolver: AbstractReplyViewResolver<Any>? = replyViewResolvers.firstOrNull { it.isApplicable(replyView) } as AbstractReplyViewResolver<Any>?
+            val resolver: AbstractReplyViewResolver<Any>? =
+                replyViewResolvers.firstOrNull { it.isApplicable(replyView) } as AbstractReplyViewResolver<Any>?
             resolver?.handle(chatId, replyView)
         }.orElse { ReplyKeyboardRemove() }
     }

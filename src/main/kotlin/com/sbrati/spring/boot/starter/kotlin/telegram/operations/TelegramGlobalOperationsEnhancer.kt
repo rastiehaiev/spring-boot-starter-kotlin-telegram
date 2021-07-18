@@ -1,8 +1,8 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.operations
 
+import com.github.kotlintelegrambot.entities.Update
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.callback.CallbackDataObject
 import com.sbrati.telegram.domain.Event
-import me.ivmg.telegram.entities.Update
 import org.springframework.beans.factory.annotation.Autowired
 import javax.annotation.PostConstruct
 

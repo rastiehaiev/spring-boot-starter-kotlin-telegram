@@ -1,13 +1,15 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.operations
 
+import com.github.kotlintelegrambot.entities.Update
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.callback.CallbackDataObject
-import me.ivmg.telegram.entities.Update
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-class GlobalCallbackHandler<C : CallbackDataObject>(private val kClass: KClass<C>,
-                                                    private val callbackData: String,
-                                                    private val handler: (Update, C) -> Any) {
+class GlobalCallbackHandler<C : CallbackDataObject>(
+    private val kClass: KClass<C>,
+    private val callbackData: String,
+    private val handler: (Update, C) -> Any
+) {
 
     fun isApplicable(update: Update): Boolean {
         val callbackQuery = update.callbackQuery ?: return false
