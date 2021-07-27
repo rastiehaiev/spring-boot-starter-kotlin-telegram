@@ -152,8 +152,9 @@ class TelegramOperationsManager(
 
             val text = update.message?.text
             val executionContext = (if (text != null && text.startsWith("/")) {
-                val commandName = text.substring(1)
-                executionContextProvider.create(chatId, update, commandName)
+                val commandName = text.substring(1).split(" ")[0]
+                val commandArgs = text.substring(1).split(" ").drop(1)
+                executionContextProvider.create(chatId, update, commandName, commandArgs)
             } else {
                 executionContextProvider.findByChatId(chatId)
             }) ?: return null

@@ -11,9 +11,11 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class TelegramCommandExecutionContextProvider(private val commandRepository: TelegramCommandRepository,
-                                              private var adminChatIdsProvider: AdminChatIdsProvider?,
-                                              private val commandExecutionContextRepository: TelegramCommandExecutionContextRepository) {
+class TelegramCommandExecutionContextProvider(
+    private val commandRepository: TelegramCommandRepository,
+    private var adminChatIdsProvider: AdminChatIdsProvider?,
+    private val commandExecutionContextRepository: TelegramCommandExecutionContextRepository
+) {
 
     private val logger by LoggerDelegate()
 
@@ -25,7 +27,14 @@ class TelegramCommandExecutionContextProvider(private val commandRepository: Tel
         commandExecutionContextRepository.delete(chatId)
     }
 
-    fun create(chatId: Long, update: Update, commandName: String, context: Context? = null, synthetic: Boolean = false): CommandExecutionContext? {
+    fun create(
+        chatId: Long,
+        update: Update,
+        commandName: String,
+        commandArgs: List<String> = emptyList(),
+        context: Context? = null,
+        synthetic: Boolean = false
+    ): CommandExecutionContext? {
         val command = commandRepository.findByName(commandName) ?: return null
         if (command.synthetic && !synthetic) {
             return null
@@ -38,6 +47,7 @@ class TelegramCommandExecutionContextProvider(private val commandRepository: Tel
             }
         }
         val finalContext = (context ?: command.createContext()).fill(chatId, update)
+        finalContext.commandArgs = commandArgs
         val commandContext = CommandExecutionContext(context = finalContext, commandName = commandName)
         if (synthetic) {
             commandExecutionContextRepository.store(commandContext)

@@ -8,9 +8,10 @@ import java.util.*
 open class Context {
 
     val id: String = RandomStringUtils.randomAlphanumeric(5)
-
     var chatId: Long? = null
+
     var locale: Locale? = null
     lateinit var firstName: String
+    var commandArgs: List<String> = emptyList()
     var lastName: String? = null
 }
