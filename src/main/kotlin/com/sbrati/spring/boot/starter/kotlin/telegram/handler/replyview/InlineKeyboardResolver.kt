@@ -33,7 +33,13 @@ class InlineKeyboardResolver(
                 val callbackData = it.callbackData?.let { data ->
                     "${prefix}^${data.asString()}"
                 }
-                if (it.url != null) {
+
+                val switchInlineQuery = it.switchInlineQuery
+                if (switchInlineQuery != null) {
+                    val queryText = telegramMessageResolver.resolve(
+                        chatId = chatId, key = switchInlineQuery.key, args = switchInlineQuery.args)
+                    InlineKeyboardButton.SwitchInlineQuery(text, queryText)
+                } else if (it.url != null) {
                     InlineKeyboardButton.Url(text = text, url = it.url!!)
                 } else {
                     InlineKeyboardButton.CallbackData(text = text, callbackData = callbackData!!)
