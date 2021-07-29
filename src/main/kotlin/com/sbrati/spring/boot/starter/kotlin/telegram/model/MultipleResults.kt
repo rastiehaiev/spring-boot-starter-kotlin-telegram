@@ -8,6 +8,10 @@ class MultipleResults {
         list.add(result)
         return this
     }
+
+    operator fun plusAssign(result: Any) {
+        list.add(result)
+    }
 }
 
 fun Any.addTo(results: MultipleResults) {
