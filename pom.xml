@@ -6,7 +6,7 @@
 
     <groupId>com.sbrati</groupId>
     <artifactId>spring-boot-starter-kotlin-telegram</artifactId>
-    <version>4.0.5</version>
+    <version>4.0.9</version>
     <packaging>jar</packaging>
 
     <properties>

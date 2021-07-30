@@ -6,6 +6,7 @@ import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.callbackQuery
 import com.github.kotlintelegrambot.dispatcher.message
+import com.github.kotlintelegrambot.dispatcher.preCheckoutQuery
 import com.github.kotlintelegrambot.extensions.filters.Filter
 import com.github.kotlintelegrambot.logging.LogLevel
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.BlockedChatHandler
@@ -61,6 +62,9 @@ open class TelegramBotConfiguration(private val properties: TelegramBotConfigura
                         manager.onUpdate(update)
                     }
                     callbackQuery {
+                        manager.onUpdate(update)
+                    }
+                    preCheckoutQuery {
                         manager.onUpdate(update)
                     }
                 }

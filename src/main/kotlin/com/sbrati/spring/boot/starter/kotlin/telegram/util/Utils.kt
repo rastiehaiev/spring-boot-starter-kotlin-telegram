@@ -30,5 +30,7 @@ fun Update.fullName(): String {
 }
 
 fun Update.chatId(): Long? {
-    return this.message?.chat?.id ?: this.callbackQuery?.message?.chat?.id
+    return this.message?.chat?.id
+        ?: this.callbackQuery?.message?.chat?.id
+        ?: this.preCheckoutQuery?.from?.id
 }

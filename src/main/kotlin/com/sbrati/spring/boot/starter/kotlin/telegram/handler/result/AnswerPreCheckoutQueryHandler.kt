@@ -3,6 +3,7 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.handler.result
 import com.github.kotlintelegrambot.Bot
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.AnswerPreCheckoutQuery
 import com.sbrati.spring.boot.starter.kotlin.telegram.resolver.TelegramMessageResolver
+import com.sbrati.spring.boot.starter.kotlin.telegram.util.LoggerDelegate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Component
@@ -16,6 +17,8 @@ class AnswerPreCheckoutQueryHandler(
     @Autowired
     private lateinit var applicationContext: ApplicationContext
 
+    private val log by LoggerDelegate()
+
     private val bot: Bot by lazy {
         applicationContext.getBean(Bot::class.java)
     }
@@ -27,6 +30,16 @@ class AnswerPreCheckoutQueryHandler(
         } else {
             null
         }
+
+        log.info("Answering pre-checkout query.")
         bot.answerPreCheckoutQuery(resultPayload.preCheckoutQueryId, resultPayload.ok, errorMessage)
+            .fold(
+                ifSuccess = { success ->
+                    log.info("Successfully answered pre-checkout: $success.")
+                },
+                ifError = { error ->
+                    log.info("Error while answering pre-checkout: $error.")
+                }
+            )
     }
 }
