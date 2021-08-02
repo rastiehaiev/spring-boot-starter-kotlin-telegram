@@ -11,7 +11,7 @@ class PlainMessageHandler : AbstractMessageHandler<PlainMessage>(PlainMessage::c
     override fun messages(chatId: Long, message: PlainMessage): List<BotResultEntity> {
         val text = message.text
         return text?.let {
-            val replyMarkup = replyMarkup(chatId, message.replyView)
+            val replyMarkup = replyViewResolver.resolve(chatId, message.replyView)
             listOf<BotResultEntity>(BotMessage(chatId = chatId, text = text, parseMode = message.parseMode, replyMarkup = replyMarkup))
         }.orEmpty()
     }

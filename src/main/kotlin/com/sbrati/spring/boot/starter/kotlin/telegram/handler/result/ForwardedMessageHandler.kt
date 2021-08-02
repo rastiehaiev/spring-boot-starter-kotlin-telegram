@@ -25,7 +25,7 @@ class ForwardedMessageHandler(private val telegramMessageResolver: TelegramMessa
         val update = message.original!!
         val userFullName = update.fullName()
         val caption = update.message?.caption
-        val replyMarkup = replyMarkup(chatId, message.replyView)
+        val replyMarkup = replyViewResolver.resolve(chatId, message.replyView)
         val results: MutableList<BotResultEntity> = arrayListOf()
 
         val photoList = update.message?.photo

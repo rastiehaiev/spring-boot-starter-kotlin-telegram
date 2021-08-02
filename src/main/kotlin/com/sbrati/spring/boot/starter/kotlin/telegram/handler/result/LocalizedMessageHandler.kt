@@ -11,7 +11,7 @@ class LocalizedMessageHandler(private val telegramMessageResolver: TelegramMessa
     : AbstractMessageHandler<LocalizedMessage>(LocalizedMessage::class.java) {
 
     override fun messages(chatId: Long, message: LocalizedMessage): List<BotResultEntity> {
-        val replyMarkup = replyMarkup(chatId, message.replyView)
+        val replyMarkup = replyViewResolver.resolve(chatId, message.replyView)
         val text = telegramMessageResolver.resolve(chatId = chatId,
                 key = message.key,
                 args = message.args)

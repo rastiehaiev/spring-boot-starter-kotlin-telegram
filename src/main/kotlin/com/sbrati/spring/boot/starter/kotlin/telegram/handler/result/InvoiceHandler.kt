@@ -45,7 +45,7 @@ class InvoiceHandler(
                     )
                 ),
                 invoicePhoto = InvoicePhotoDetail(photoUrl = resultPayload.photoUrl, photoSize = 50),
-                invoiceUserDetail = InvoiceUserDetail(needPhoneNumber = true, sendPhoneNumberToProvider = true)
+                invoiceUserDetail = InvoiceUserDetail(needPhoneNumber = false, sendPhoneNumberToProvider = false)
             )
         )
     }

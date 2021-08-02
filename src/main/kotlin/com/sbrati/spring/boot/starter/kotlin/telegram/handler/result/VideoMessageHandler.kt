@@ -2,7 +2,7 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.handler.result
 
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.ChatId
-import com.sbrati.spring.boot.starter.kotlin.telegram.model.message.EditMessageText
+import com.sbrati.spring.boot.starter.kotlin.telegram.model.message.VideoMessage
 import com.sbrati.spring.boot.starter.kotlin.telegram.resolver.ReplyViewResolver
 import com.sbrati.spring.boot.starter.kotlin.telegram.resolver.TelegramMessageResolver
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,8 +10,9 @@ import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Component
 
 @Component
-class EditMessageTextHandler(private val telegramMessageResolver: TelegramMessageResolver) :
-    ResultHandler<EditMessageText>(EditMessageText::class.java) {
+class VideoMessageHandler(
+    private val telegramMessageResolver: TelegramMessageResolver
+) : ResultHandler<VideoMessage>(VideoMessage::class.java) {
 
     @Autowired
     private lateinit var applicationContext: ApplicationContext
@@ -23,19 +24,19 @@ class EditMessageTextHandler(private val telegramMessageResolver: TelegramMessag
         applicationContext.getBean(Bot::class.java)
     }
 
-    override fun handle(chatId: Long, resultPayload: EditMessageText) {
+    override fun handle(chatId: Long, resultPayload: VideoMessage) {
         val replyMarkup = replyViewResolver.resolve(chatId, resultPayload.replyView)
-        val text = telegramMessageResolver.resolve(
+        val caption = telegramMessageResolver.resolve(
             chatId = chatId,
-            key = resultPayload.key,
-            args = resultPayload.args
+            key = resultPayload.captionKey,
+            args = resultPayload.captionArgs
         )
-        bot.editMessageText(
+
+        bot.sendVideo(
             chatId = ChatId.fromId(chatId),
-            messageId = resultPayload.messageId,
-            text = text,
-            parseMode = resultPayload.parseMode,
-            replyMarkup = replyMarkup
+            caption = caption,
+            replyMarkup = replyMarkup,
+            fileId = resultPayload.fileId
         )
     }
 }
