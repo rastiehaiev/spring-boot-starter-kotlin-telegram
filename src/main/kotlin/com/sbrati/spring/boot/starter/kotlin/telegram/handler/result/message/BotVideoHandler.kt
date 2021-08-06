@@ -5,9 +5,7 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.model.BotResult
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.BotResultStatus
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.getBotResultStatus
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.message.bot.BotVideo
-import com.sbrati.spring.boot.starter.kotlin.telegram.resolver.ReplyViewResolver
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.orElse
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
