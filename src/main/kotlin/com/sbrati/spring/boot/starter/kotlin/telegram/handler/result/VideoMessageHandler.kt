@@ -23,6 +23,7 @@ class VideoMessageHandler(private val telegramMessageResolver: TelegramMessageRe
             BotVideo(
                 chatId = chatId,
                 caption = caption,
+                fileId = message.fileId,
                 parseMode = message.parseMode,
                 replyMarkup = replyMarkup
             )
