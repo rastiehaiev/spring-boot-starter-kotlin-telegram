@@ -50,6 +50,7 @@ open class TelegramBotConfiguration(private val properties: TelegramBotConfigura
         val botLogLevel = when (properties.logLevel?.toUpperCase()) {
             "BASIC" -> LogLevel.Network.Basic
             "BODY" -> LogLevel.Network.Body
+            "HEADERS" -> LogLevel.Network.Headers
             else -> LogLevel.Network.None
         }
 
