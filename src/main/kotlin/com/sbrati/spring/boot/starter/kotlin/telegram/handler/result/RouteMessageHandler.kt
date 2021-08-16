@@ -7,10 +7,11 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.service.UserService
 import org.springframework.stereotype.Component
 
 @Component
-class RouteMessageHandler(private val userService: UserService<*>?,
-                          private val adminChatIdsProvider: AdminChatIdsProvider?,
-                          private val messageHandlers: MessageHandlers)
-    : ResultHandler<RouteMessage>(RouteMessage::class.java) {
+class RouteMessageHandler(
+    private val userService: UserService<*>?,
+    private val adminChatIdsProvider: AdminChatIdsProvider?,
+    private val messageHandlers: MessageHandlers,
+) : ResultHandler<RouteMessage>(RouteMessage::class.java) {
 
     override fun handle(chatId: Long, resultPayload: RouteMessage) {
         val adminsMessage = resultPayload.adminsMessage

@@ -2,11 +2,13 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.model
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.message.MessageSpec
 
-class RouteMessage(var senderMessage: MessageSpec? = null,
-                   var everyoneMessage: MessageSpec? = null,
-                   var adminsMessage: MessageSpec? = null,
-                   var receiverMessage: MessageSpec? = null,
-                   var receiverChatId: Long? = null) {
+class RouteMessage(
+    var senderMessage: MessageSpec? = null,
+    var everyoneMessage: MessageSpec? = null,
+    var adminsMessage: MessageSpec? = null,
+    var receiverMessage: MessageSpec? = null,
+    var receiverChatId: Long? = null,
+) {
 
     fun sender(spec: () -> MessageSpec) {
         this.senderMessage = spec()

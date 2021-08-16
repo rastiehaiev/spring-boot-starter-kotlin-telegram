@@ -26,10 +26,11 @@ class InvoiceHandler(
     }
 
     override fun handle(chatId: Long, resultPayload: InvoiceMessage) {
-        val title = telegramMessageResolver.resolve(chatId, resultPayload.titleKey, resultPayload.titleArgs)
-        val description = telegramMessageResolver.resolve(chatId, resultPayload.descriptionKey, resultPayload.descriptionArgs)
+        val aChatId = resultPayload.chatId ?: chatId
+        val title = telegramMessageResolver.resolve(aChatId, resultPayload.titleKey, resultPayload.titleArgs)
+        val description = telegramMessageResolver.resolve(aChatId, resultPayload.descriptionKey, resultPayload.descriptionArgs)
         bot.sendInvoice(
-            chatId = ChatId.fromId(chatId),
+            chatId = ChatId.fromId(aChatId),
             paymentInvoiceInfo = PaymentInvoiceInfo(
                 title = title,
                 description = description,

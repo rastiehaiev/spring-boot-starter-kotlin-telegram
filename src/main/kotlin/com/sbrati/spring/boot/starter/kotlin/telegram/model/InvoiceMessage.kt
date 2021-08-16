@@ -2,6 +2,7 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.model
 
 
 data class InvoiceMessage(
+    val chatId: Long? = null,
     val payload: String,
     val titleKey: String,
     val titleArgs: List<String> = emptyList(),
