@@ -1,6 +1,7 @@
 package com.sbrati.spring.boot.starter.kotlin.telegram.manager
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.kotlintelegrambot.entities.Update
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.Context
 import com.sbrati.spring.boot.starter.kotlin.telegram.command.TelegramCommandStage
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.DailyRequestLimiter
@@ -14,6 +15,7 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.model.NoHandlerFound
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.StartNewCommand
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.stages.JumpToStage
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.stages.NextStage
+import com.sbrati.spring.boot.starter.kotlin.telegram.operations.CustomUpdateHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.operations.GlobalEventHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.operations.GlobalUpdateHandler
 import com.sbrati.spring.boot.starter.kotlin.telegram.operations.TelegramGlobalOperations
@@ -22,7 +24,6 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.service.UserService
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.LoggerDelegate
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.chatId
 import com.sbrati.telegram.domain.Event
-import com.github.kotlintelegrambot.entities.Update
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -49,6 +50,9 @@ class TelegramOperationsManager(
 
     @Autowired(required = false)
     private var globalUpdateHandler: GlobalUpdateHandler? = null
+
+    @Autowired(required = false)
+    private var customUpdateHandler: CustomUpdateHandler? = null
 
     fun onEvent(event: Event<*>): Any? {
         val payload = event.payload
@@ -128,6 +132,11 @@ class TelegramOperationsManager(
         if (globalUpdateHandler != null) {
             globalUpdateHandler.onUpdate(update)
             return EmptyResult
+        }
+
+        val customUpdateHandler = this.customUpdateHandler
+        if (customUpdateHandler != null && customUpdateHandler.isApplicable(update)) {
+            return customUpdateHandler.onUpdate(update)
         }
 
         synchronized(chatId) {
