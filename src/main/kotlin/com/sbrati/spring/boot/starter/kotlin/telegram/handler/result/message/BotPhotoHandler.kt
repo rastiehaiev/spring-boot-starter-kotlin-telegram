@@ -14,9 +14,10 @@ class BotPhotoHandler : BotHandler<BotPhoto>(BotPhoto::class.java) {
 
     override fun handle(botMessage: BotPhoto): BotResult {
         val chatId = botMessage.chatId
+        val photo = botMessage.photo
         val result = bot.sendPhoto(
             chatId = ChatId.fromId(chatId),
-            photo = botMessage.photo,
+            photo = photo!!,
             parseMode = ParseMode.MARKDOWN,
             replyMarkup = botMessage.replyMarkup,
             caption = botMessage.caption)

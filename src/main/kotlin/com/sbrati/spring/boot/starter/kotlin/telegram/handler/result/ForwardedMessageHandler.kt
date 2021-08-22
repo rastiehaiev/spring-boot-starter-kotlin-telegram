@@ -33,7 +33,7 @@ class ForwardedMessageHandler(private val telegramMessageResolver: TelegramMessa
             val userChatId = update.chatId()
             val userLink = "[$userFullName](tg://user?id=$userChatId)"
             val resultCaption = userLink + (caption?.prependIndent(" :: ").orElse(""))
-            results.add(BotPhoto(chatId = chatId, photo = it.fileId, caption = resultCaption, replyMarkup = replyMarkup))
+            results.add(BotPhoto(chatId = chatId, fileId = it.fileId, caption = resultCaption, replyMarkup = replyMarkup))
         }
 
         val voice = update.message?.voice
