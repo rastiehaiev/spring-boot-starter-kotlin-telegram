@@ -17,7 +17,7 @@ class TelegramMessageResolver(
         return resolve(key, args, locale)
     }
 
-    private fun resolve(key: String, args: List<Any> = emptyList(), locale: Locale): String {
+    fun resolve(key: String, args: List<Any> = emptyList(), locale: Locale): String {
         val arguments = args.map { arg -> resolveOrMapToString(arg, locale) }.toTypedArray()
         return messageSource.getMessage(key, arguments, key, locale)!!
     }

@@ -10,6 +10,7 @@ import com.github.kotlintelegrambot.dispatcher.preCheckoutQuery
 import com.github.kotlintelegrambot.extensions.filters.Filter
 import com.github.kotlintelegrambot.logging.LogLevel
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.BlockedChatHandler
+import com.sbrati.spring.boot.starter.kotlin.telegram.model.BotCommands
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.GenericRequestLimiter
 import com.sbrati.spring.boot.starter.kotlin.telegram.manager.TelegramManager
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.BanOptions
@@ -18,6 +19,8 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.properties.TelegramBotMode
 import com.sbrati.spring.boot.starter.kotlin.telegram.repository.InMemoryTelegramCommandExecutionContextRepository
 import com.sbrati.spring.boot.starter.kotlin.telegram.repository.RequestStatisticsRepository
 import com.sbrati.spring.boot.starter.kotlin.telegram.repository.TelegramCommandExecutionContextRepository
+import com.sbrati.spring.boot.starter.kotlin.telegram.resolver.TelegramMessageResolver
+import com.sbrati.spring.boot.starter.kotlin.telegram.service.BotCommandProviderService
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.DefaultLocaleService
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.LocaleService
 import com.sbrati.spring.boot.starter.kotlin.telegram.service.UserAwarenessService
@@ -124,6 +127,16 @@ open class TelegramBotConfiguration(private val properties: TelegramBotConfigura
         banOptions: BanOptions
     ): GenericRequestLimiter {
         return GenericRequestLimiter(banOptions, repository)
+    }
+
+    @Bean
+    @ConditionalOnBean(BotCommands::class)
+    open fun botCommandProviderService(
+        bot: Bot,
+        telegramMessageResolver: TelegramMessageResolver,
+        botCommands: BotCommands,
+    ): BotCommandProviderService {
+        return BotCommandProviderService(bot, botCommands, telegramMessageResolver)
     }
 
     @EventListener(ApplicationReadyEvent::class)
