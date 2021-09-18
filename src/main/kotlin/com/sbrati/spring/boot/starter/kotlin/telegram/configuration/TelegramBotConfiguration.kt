@@ -14,6 +14,7 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.model.BotCommands
 import com.sbrati.spring.boot.starter.kotlin.telegram.component.GenericRequestLimiter
 import com.sbrati.spring.boot.starter.kotlin.telegram.manager.TelegramManager
 import com.sbrati.spring.boot.starter.kotlin.telegram.model.BanOptions
+import com.sbrati.spring.boot.starter.kotlin.telegram.model.TelegramSupportedLanguages
 import com.sbrati.spring.boot.starter.kotlin.telegram.properties.TelegramBotConfigurationProperties
 import com.sbrati.spring.boot.starter.kotlin.telegram.properties.TelegramBotMode
 import com.sbrati.spring.boot.starter.kotlin.telegram.repository.InMemoryTelegramCommandExecutionContextRepository
@@ -134,9 +135,10 @@ open class TelegramBotConfiguration(private val properties: TelegramBotConfigura
     open fun botCommandProviderService(
         bot: Bot,
         telegramMessageResolver: TelegramMessageResolver,
+        telegramSupportedLanguages: TelegramSupportedLanguages,
         botCommands: BotCommands,
     ): BotCommandProviderService {
-        return BotCommandProviderService(bot, botCommands, telegramMessageResolver)
+        return BotCommandProviderService(bot, botCommands, telegramMessageResolver, telegramSupportedLanguages)
     }
 
     @EventListener(ApplicationReadyEvent::class)
