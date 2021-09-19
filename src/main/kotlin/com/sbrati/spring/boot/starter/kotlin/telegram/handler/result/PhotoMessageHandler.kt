@@ -23,7 +23,8 @@ class PhotoMessageHandler(private val telegramMessageResolver: TelegramMessageRe
             BotPhoto(
                 chatId = chatId,
                 caption = caption,
-                photo = message.file!!,
+                photo = message.file,
+                fileId = message.fileId,
                 replyMarkup = replyMarkup
             )
         )

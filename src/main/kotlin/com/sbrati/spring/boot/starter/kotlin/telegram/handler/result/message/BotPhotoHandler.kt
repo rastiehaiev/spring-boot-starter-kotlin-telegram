@@ -15,12 +15,24 @@ class BotPhotoHandler : BotHandler<BotPhoto>(BotPhoto::class.java) {
     override fun handle(botMessage: BotPhoto): BotResult {
         val chatId = botMessage.chatId
         val photo = botMessage.photo
-        val result = bot.sendPhoto(
-            chatId = ChatId.fromId(chatId),
-            photo = photo!!,
-            parseMode = ParseMode.MARKDOWN,
-            replyMarkup = botMessage.replyMarkup,
-            caption = botMessage.caption)
+        val fileId = botMessage.fileId
+        val result = if (photo != null) {
+            bot.sendPhoto(
+                chatId = ChatId.fromId(chatId),
+                photo = photo,
+                parseMode = ParseMode.MARKDOWN,
+                replyMarkup = botMessage.replyMarkup,
+                caption = botMessage.caption
+            )
+        } else {
+            bot.sendPhoto(
+                chatId = ChatId.fromId(chatId),
+                photo = fileId,
+                parseMode = ParseMode.MARKDOWN,
+                replyMarkup = botMessage.replyMarkup,
+                caption = botMessage.caption
+            )
+        }
 
         val status = result.getCode()?.getBotResultStatus().orElse(BotResultStatus.OK)
         return BotResult(status, chatId)

@@ -6,7 +6,7 @@ import java.io.File
 class BotPhoto(
     var chatId: Long,
     var photo: File? = null,
-    var fileId: String? = null,
+    var fileId: String = "",
     var caption: String? = null,
     var replyMarkup: ReplyMarkup? = null,
 ) : BotResultEntity
