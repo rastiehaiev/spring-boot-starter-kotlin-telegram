@@ -8,5 +8,6 @@ class BotVideo(
     var caption: String? = null,
     var parseMode: ParseMode? = null,
     var replyMarkup: ReplyMarkup? = null,
-    var fileId: String = ""
+    var fileId: String = "",
+    var disableNotification: Boolean = false,
 ) : BotResultEntity

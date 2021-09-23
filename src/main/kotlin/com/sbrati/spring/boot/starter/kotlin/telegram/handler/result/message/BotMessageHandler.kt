@@ -19,7 +19,8 @@ class BotMessageHandler : BotHandler<BotMessage>(BotMessage::class.java) {
             chatId = ChatId.fromId(chatId),
             text = botMessage.text,
             parseMode = botMessage.parseMode,
-            replyMarkup = botMessage.replyMarkup
+            replyMarkup = botMessage.replyMarkup,
+            disableNotification = botMessage.disableNotification,
         )
 
         val status = result.getCode()?.getBotResultStatus().orElse(BotResultStatus.OK)

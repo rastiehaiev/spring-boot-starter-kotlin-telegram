@@ -4,7 +4,7 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.model.message.MessageSpec
 
 class RouteMessage(
     var senderMessage: MessageSpec? = null,
-    var everyoneMessage: MessageSpec? = null,
+    var everyoneMessage: ((Long) -> MessageSpec)? = null,
     var adminsMessage: MessageSpec? = null,
     var receiverMessage: MessageSpec? = null,
     var receiverChatId: Long? = null,
@@ -14,8 +14,8 @@ class RouteMessage(
         this.senderMessage = spec()
     }
 
-    fun everyone(spec: () -> MessageSpec) {
-        this.everyoneMessage = spec()
+    fun everyone(spec: (Long) -> MessageSpec) {
+        this.everyoneMessage = spec
     }
 
     fun admin(spec: () -> MessageSpec) {

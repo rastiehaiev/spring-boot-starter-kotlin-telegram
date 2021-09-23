@@ -9,4 +9,5 @@ class BotPhoto(
     var fileId: String = "",
     var caption: String? = null,
     var replyMarkup: ReplyMarkup? = null,
+    var disableNotification: Boolean = false,
 ) : BotResultEntity

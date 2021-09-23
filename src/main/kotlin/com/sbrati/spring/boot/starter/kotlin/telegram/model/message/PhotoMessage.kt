@@ -11,6 +11,7 @@ open class PhotoMessage(
     var replyView: ReplyView? = null,
     var file: File? = null,
     var fileId: String = "",
+    var disableNotification: Boolean = false,
 ) : MessageSpec
 
 fun photoMessage(builder: PhotoMessage.() -> Unit): PhotoMessage {

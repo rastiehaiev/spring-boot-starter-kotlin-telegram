@@ -18,7 +18,8 @@ class BotVideoHandler: BotHandler<BotVideo>(BotVideo::class.java) {
             chatId = ChatId.fromId(chatId),
             fileId = botMessage.fileId,
             caption = botMessage.caption,
-            replyMarkup = botMessage.replyMarkup
+            replyMarkup = botMessage.replyMarkup,
+            disableNotification = botMessage.disableNotification,
         )
 
         val status = result.getCode()?.getBotResultStatus().orElse(BotResultStatus.OK)

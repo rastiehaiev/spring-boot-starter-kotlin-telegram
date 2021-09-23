@@ -7,7 +7,8 @@ open class LocalizedMessage(
     var key: String = "",
     var args: List<Any> = emptyList(),
     var parseMode: ParseMode? = null,
-    var replyView: ReplyView? = null
+    var replyView: ReplyView? = null,
+    var disableNotification: Boolean = false,
 ) : MessageSpec
 
 fun message(key: String, args: List<Any> = emptyList()): LocalizedMessage {

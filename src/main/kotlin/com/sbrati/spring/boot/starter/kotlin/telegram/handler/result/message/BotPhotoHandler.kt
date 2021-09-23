@@ -30,7 +30,8 @@ class BotPhotoHandler : BotHandler<BotPhoto>(BotPhoto::class.java) {
                 photo = fileId,
                 parseMode = ParseMode.MARKDOWN,
                 replyMarkup = botMessage.replyMarkup,
-                caption = botMessage.caption
+                caption = botMessage.caption,
+                disableNotification = botMessage.disableNotification,
             )
         }
 

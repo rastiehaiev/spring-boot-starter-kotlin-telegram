@@ -8,7 +8,8 @@ open class VideoMessage(
     var captionArgs: List<Any> = emptyList(),
     var parseMode: ParseMode? = null,
     var replyView: ReplyView? = null,
-    var fileId: String = ""
+    var fileId: String = "",
+    var disableNotification: Boolean = false,
 ) : MessageSpec
 
 fun videoMessage(builder: VideoMessage.() -> Unit): VideoMessage {

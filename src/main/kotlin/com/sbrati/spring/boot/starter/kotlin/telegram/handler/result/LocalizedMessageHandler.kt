@@ -7,14 +7,21 @@ import com.sbrati.spring.boot.starter.kotlin.telegram.resolver.TelegramMessageRe
 import org.springframework.stereotype.Component
 
 @Component
-class LocalizedMessageHandler(private val telegramMessageResolver: TelegramMessageResolver)
-    : AbstractMessageHandler<LocalizedMessage>(LocalizedMessage::class.java) {
+class LocalizedMessageHandler(private val telegramMessageResolver: TelegramMessageResolver) :
+    AbstractMessageHandler<LocalizedMessage>(LocalizedMessage::class.java) {
 
     override fun messages(chatId: Long, message: LocalizedMessage): List<BotResultEntity> {
         val replyMarkup = replyViewResolver.resolve(chatId, message.replyView)
         val text = telegramMessageResolver.resolve(chatId = chatId,
-                key = message.key,
-                args = message.args)
-        return listOf(BotMessage(chatId = chatId, text = text, parseMode = message.parseMode, replyMarkup = replyMarkup))
+            key = message.key,
+            args = message.args)
+        return listOf(
+            BotMessage(chatId = chatId,
+                text = text,
+                parseMode = message.parseMode,
+                replyMarkup = replyMarkup,
+                disableNotification = message.disableNotification,
+            )
+        )
     }
 }

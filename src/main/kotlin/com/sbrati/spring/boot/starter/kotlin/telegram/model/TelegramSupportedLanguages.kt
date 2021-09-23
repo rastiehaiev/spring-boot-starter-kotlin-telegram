@@ -2,7 +2,6 @@ package com.sbrati.spring.boot.starter.kotlin.telegram.model
 
 import com.sbrati.spring.boot.starter.kotlin.telegram.util.orElse
 import java.util.*
-import kotlin.collections.ArrayList
 
 class TelegramSupportedLanguages(val defaultLanguage: Pair<String, Locale>, val otherLanguages: MutableList<Pair<String, Locale>> = ArrayList())
 
@@ -13,6 +12,9 @@ fun TelegramSupportedLanguages.then(language: Pair<String, Locale>): TelegramSup
     return this
 }
 
+fun TelegramSupportedLanguages.allLanguages(): List<Pair<String, Locale>> {
+    return mutableListOf<Pair<String, Locale>>() + defaultLanguage + otherLanguages
+}
 fun TelegramSupportedLanguages.contains(language: String): Boolean {
     return localeByName(language) != null
 }

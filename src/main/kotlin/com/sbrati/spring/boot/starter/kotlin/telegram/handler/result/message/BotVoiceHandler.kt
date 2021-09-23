@@ -16,7 +16,8 @@ class BotVoiceHandler : BotHandler<BotVoice>(BotVoice::class.java) {
         val result = bot.sendVoice(
             chatId = ChatId.fromId(chatId),
             audioId = botMessage.audioId,
-            replyMarkup = botMessage.replyMarkup
+            replyMarkup = botMessage.replyMarkup,
+            disableNotification = botMessage.disableNotification,
         )
 
         val status = result.getCode()?.getBotResultStatus().orElse(BotResultStatus.OK)

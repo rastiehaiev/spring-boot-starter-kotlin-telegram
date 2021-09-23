@@ -20,7 +20,9 @@ class RouteMessageHandler(
         }
         val everyoneMessage = resultPayload.everyoneMessage
         everyoneMessage?.let {
-            userService?.getAllChatIds()?.forEach { messageHandlers.processMessage(it, everyoneMessage) }
+            userService?.getAllChatIds()?.forEach { chatId ->
+                messageHandlers.processMessage(chatId, everyoneMessage(chatId))
+            }
         }
         val receiverMessage = resultPayload.receiverMessage
         val receiverChatId = resultPayload.receiverChatId
